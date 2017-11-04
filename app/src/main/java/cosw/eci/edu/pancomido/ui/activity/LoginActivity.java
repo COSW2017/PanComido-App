@@ -36,12 +36,13 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    final SessionManager session = new SessionManager(this);
+    SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        session = new SessionManager(this);
         if(session.isLoggedIn()){
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(i);
