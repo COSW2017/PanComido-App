@@ -4,11 +4,19 @@
     android:layout_height="match_parent"
     tools:context="cosw.eci.edu.pancomido.ui.fragment.RestaurantListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <Button android:id="@+id/refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:textAppearanceSmall"
+        android:background="@color/colorPrimary"
+        android:text="@string/update"
+        android:textColor="@android:color/white"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:textSize="60sp"/>
+        android:scrollbars="vertical" />
 
 </FrameLayout>

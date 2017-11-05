@@ -1,11 +1,15 @@
 package cosw.eci.edu.pancomido.data.network;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
+import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.Todo;
 import cosw.eci.edu.pancomido.data.model.Token;
 import cosw.eci.edu.pancomido.data.model.User;
@@ -118,6 +122,47 @@ public class RetrofitNetwork
                 try
                 {
                     Response<User> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    public void getRestaurantInformation(final String name, final RequestCallback<Restaurant> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getRestaurantInformation(name);
+                try
+                {
+                    Response<Restaurant> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void getRestaurantDishes(final Integer idRestaurant, final RequestCallback<List<Dish>> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getRestaurantDishes(idRestaurant);
+                try
+                {
+                    Response<List<Dish>> execute = call.execute();
                     requestCallback.onSuccess( execute.body() );
                 }
                 catch ( IOException e )
