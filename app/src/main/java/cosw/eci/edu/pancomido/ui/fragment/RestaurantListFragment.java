@@ -83,7 +83,7 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        showMyLocation();
+        getLocation();
     }
 
     @SuppressWarnings("MissingPermission")
