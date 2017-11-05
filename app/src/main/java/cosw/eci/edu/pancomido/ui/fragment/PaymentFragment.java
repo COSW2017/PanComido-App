@@ -294,27 +294,30 @@ public class PaymentFragment extends Fragment{
     }
 
     private void configureAdapter(List<User> response) {
-        friends_list = response;
-        ArrayList<String> arrayList = new ArrayList<>();
-        cant_friends = response.size();
 
-        for(int i = 0 ; i < cant_friends; i++){
-            booleans_final.add(new boolean[total_dishes]);
+        if (response != null) {
+
+            friends_list = response;
+            ArrayList<String> arrayList = new ArrayList<>();
+            cant_friends = response.size();
+
+            for(int i = 0 ; i < cant_friends; i++){
+                booleans_final.add(new boolean[total_dishes]);
+            }
+
+            System.out.println("Booleans "+booleans_final);
+            for (boolean[] b : booleans_final){
+                System.out.println(Arrays.toString(b));
+            }
+
+            for (User u : response){
+                arrayList.add(u.getFirstname()+" "+u.getLastname());
+            }
+
+            arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
+            friends.setAdapter(arrayAdapter);
+            //friends.setTextFilterEnabled(true);
         }
-
-        System.out.println("Booleans "+booleans_final);
-        for (boolean[] b : booleans_final){
-            System.out.println(Arrays.toString(b));
-        }
-
-        for (User u : response){
-            arrayList.add(u.getFirstname()+" "+u.getLastname());
-        }
-
-        arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
-        friends.setAdapter(arrayAdapter);
-        //friends.setTextFilterEnabled(true);
-
     }
 
 

@@ -33,6 +33,9 @@ interface NetworkService
     @POST( "user/register" )
     Call<User> createUser(@Body User user);
 
+    @POST("user/search")
+    Call<User> getUserByEmail(@Body String email);
+
     @GET("restaurant/{name}")
     Call<Restaurant> getRestaurantInformation(@Path("name") String name);
 
