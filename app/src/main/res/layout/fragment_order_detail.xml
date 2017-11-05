@@ -1,13 +1,51 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cosw.eci.edu.pancomido.OrderDetailFragment">
+    tools:context="cosw.eci.edu.pancomido.ui.fragment.OrderDetailFragment"
+    android:id="@+id/order_detail">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/order_resume"
+        android:textColor="@android:color/black"
+        android:textSize="25sp"
+        android:textAlignment="center"
+        android:paddingTop="15dp"/>
+
+    <TextView
+        android:id="@+id/resume_total"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/total"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:layout_below="@id/title"
+        android:paddingTop="10dp"
+        android:textStyle="bold"/>
+
+    <ListView
+        android:id="@+id/list_commands"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_below="@id/resume_total"
+        android:paddingBottom="50dp">
+    </ListView>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/goToPay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/continue_pay"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:background="@color/green"
+        android:textSize="20dp"
+        android:layout_margin="10dp"/>
+
+</RelativeLayout>
