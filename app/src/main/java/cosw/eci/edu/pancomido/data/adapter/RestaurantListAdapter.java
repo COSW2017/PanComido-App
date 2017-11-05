@@ -24,7 +24,7 @@ import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
  * Created by estudiante on 3/9/17.
  */
 
-public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.viewHolder> implements View.OnClickListener {
+public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.viewHolder> {
 
     private List<Restaurant> restaurants;
 
