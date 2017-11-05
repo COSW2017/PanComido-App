@@ -34,6 +34,8 @@ public class SessionManager {
     public static final String ORDER = "order";
     public static final String COMMANDS = "command";
     public static final String DISHES = "dishes";
+    public static final String Q = "quan";
+    public static final String PRICE = "price";
 
     private static final String EMAIL = "email";
 
@@ -117,6 +119,25 @@ public class SessionManager {
     public String getDishes(){
         return pref.getString(DISHES, "");
     }
+
+    public void setQ(Integer q){
+        editor.putInt(Q, q);
+        editor.commit();
+    }
+
+    public int getQ(){
+        return pref.getInt(Q, -1);
+    }
+
+    public void setPrice(Integer q){
+        editor.putInt(PRICE, q);
+        editor.commit();
+    }
+
+    public int getPrice(){
+        return pref.getInt(PRICE, -1);
+    }
+
 
 
 }
