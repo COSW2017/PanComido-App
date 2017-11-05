@@ -31,5 +31,5 @@
     <string name="comments">Comments</string>
     <string name="name_of_the_dish">Name of the dish</string>
     <string name="update">Update</string>
-
+    <string name="Loading">Loading...</string>
 </resources>
