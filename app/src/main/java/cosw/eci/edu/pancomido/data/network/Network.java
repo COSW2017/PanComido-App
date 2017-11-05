@@ -24,4 +24,6 @@ public interface Network
     void getRestaurantInformation(String name,  RequestCallback<Restaurant> requestCallback);
 
     void getRestaurantDishes(Integer idRestaurant, RequestCallback<List<Dish>> requestCallback);
+
+    void getRestaurants(Float latitude, Float longitude, RequestCallback<List<Restaurant>> requestCallback);
 }

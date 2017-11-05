@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.fragment_container, restaurantFragment).addToBackStack(null).commit();
+        manager.beginTransaction().replace(R.id.fragment_container, restaurantListFragment).addToBackStack(null).commit();
 
     }
 

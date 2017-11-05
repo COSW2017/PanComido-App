@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,8 +23,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import cosw.eci.edu.pancomido.R;
+import java.util.List;
 
+import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.adapter.RestaurantListAdapter;
+import cosw.eci.edu.pancomido.data.model.Restaurant;
+import cosw.eci.edu.pancomido.data.network.RequestCallback;
+import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
+import cosw.eci.edu.pancomido.exception.NetworkException;
 
 
 /**
@@ -34,7 +41,7 @@ import cosw.eci.edu.pancomido.R;
  * Use the {@link RestaurantListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RestaurantListFragment extends Fragment {
+public class RestaurantListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView recyclerView;
 
@@ -44,12 +51,13 @@ public class RestaurantListFragment extends Fragment {
     private int permissionCheck=2;
     private final int ACCESS_LOCATION_PERMISSION_CODE=1;
     LocationManager locationManager;
-    private Double longitudeBest;
-    private Double latitudeBest;
+    private Float longitudeBest;
+    private Float latitudeBest;
     private Button refreshButton;
     private ProgressDialog progressDialog;
 
     private OnFragmentInteractionListener mListener;
+    private SwipeRefreshLayout swipeLayout;
 
     public RestaurantListFragment() {
         // Required empty public constructor
@@ -105,12 +113,33 @@ public class RestaurantListFragment extends Fragment {
 
          LocationListener locationListenerBest = new LocationListener() {
             public void onLocationChanged(Location location) {
-                longitudeBest = location.getLongitude();
-                latitudeBest = location.getLatitude();
+                longitudeBest = Float.parseFloat(location.getLongitude()+"");
+                latitudeBest = Float.parseFloat(location.getLatitude()+"");
+
+                RetrofitNetwork retrofitNetwork = new RetrofitNetwork();
+                RequestCallback<List<Restaurant>> rc = new RequestCallback<List<Restaurant>>() {
+                    @Override
+                    public void onSuccess(final List<Restaurant> response) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                configureRecyclerView(response);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailed(NetworkException e) {
+
+                    }
+                };
+                retrofitNetwork.getRestaurants(latitudeBest, longitudeBest, rc);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         Toast.makeText(getActivity(), "Latitude "+longitudeBest+" "+latitudeBest, Toast.LENGTH_SHORT).show();
+                        swipeLayout.setRefreshing(false);
                         hideDialog();
                     }
                 });
@@ -185,13 +214,20 @@ public class RestaurantListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
+        /*
         refreshButton = (Button) view.findViewById(R.id.refresh);
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showMyLocation();
             }
-        });
+        });*/
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorSchemeColors(getResources().getColor(android.R.color.holo_blue_bright),
+                getResources().getColor(android.R.color.holo_green_light),
+                getResources().getColor(android.R.color.holo_orange_light),
+                getResources().getColor(android.R.color.holo_red_light));
         return view;
     }
 
@@ -216,6 +252,13 @@ public class RestaurantListFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onRefresh() {
+        showMyLocation();
+        progressDialog.dismiss();
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -231,13 +274,13 @@ public class RestaurantListFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void configureRecyclerView(){
+    private void configureRecyclerView(List<Restaurant> restaurants){
         recyclerView = (RecyclerView) getActivity().findViewById( R.id.recyclerView );
         recyclerView.setHasFixedSize( true );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager( layoutManager );
         try {
-            //recyclerView.setAdapter(new TeamsAdapter(model.getTeamDao().getAll()));
+            recyclerView.setAdapter(new RestaurantListAdapter(restaurants));
         }catch(Exception e){
             System.out.println(e);
         }

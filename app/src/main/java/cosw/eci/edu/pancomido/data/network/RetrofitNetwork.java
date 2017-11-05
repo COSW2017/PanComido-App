@@ -153,6 +153,28 @@ public class RetrofitNetwork
         } );
     }
 
+    @Override
+    public void getRestaurants(final Float latitude, final Float longitude, final RequestCallback<List<Restaurant>> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getRestaurants(latitude, longitude);
+                try
+                {
+                    Response<List<Restaurant>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+
+    }
+
     public void addSecureTokenInterceptor( final String token )
     {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
