@@ -4,6 +4,55 @@
     android:layout_height="match_parent"
     tools:context="cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment">
 
+    <!--LinearLayout
+        android:id="@+id/view_order"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/green"
+        android:layout_margin="20dp"
+        android:orientation="horizontal"
+        android:layout_alignBottom="@id/restaurant_list"
+        android:layout_below="@id/restaurant_list">
+
+        <ImageView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_cart"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/see_order"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/dish_quanty"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="(1)"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/dish_total"
+            android:layout_weight="1"
+            android:text="$XXXXXXXX"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
+
+
+
+    </LinearLayout-->
     <LinearLayout
         android:id="@+id/linearProgressBar"
         android:layout_width="match_parent"
@@ -36,7 +85,6 @@
         android:id="@+id/restaurant_image"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:layout_gravity="top|start"
         android:src="@mipmap/ic_launcher"
         android:scaleType="fitXY"
         android:visibility="gone"
@@ -46,7 +94,6 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_gravity="top|end"
         android:layout_marginEnd="50dp"
         android:layout_marginStart="50dp"
         android:layout_marginTop="50dp"
@@ -101,7 +148,7 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:layout_below="@id/restaurant_options"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </RelativeLayout>

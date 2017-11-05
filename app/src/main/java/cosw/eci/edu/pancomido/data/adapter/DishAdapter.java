@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,9 +24,11 @@ import java.util.List;
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Command_Dish;
 import cosw.eci.edu.pancomido.data.model.Dish;
+import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.misc.loadImage;
 import cosw.eci.edu.pancomido.ui.activity.MainActivity;
+import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 
 /**
  * Created by Alejandra on 4/11/2017.
@@ -44,7 +47,6 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
     public viewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.dish_row, parent, false);
-
         return  new DishAdapter.viewHolder(itemView);
     }
 
@@ -75,6 +77,9 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
             HashMap<String, String> map = gson.fromJson(json, HashMap.class);
             if(map.containsKey(dishes.get(position).getId_dish()+
                     ","+dishes.get(position).getRestaurant().getId_restaurant())){
+                holder.manager.setQ(holder.manager.getQ()<1 ? 0 : holder.manager.getQ()-1);
+                holder.manager.setPrice(holder.manager.getPrice()<1 ? 0 : holder.manager.getPrice()-
+                        dishes.get(position).getPrice());
                 int quanty = Integer.parseInt(map.get(dishes.get(position).getId_dish()+
                         ","+dishes.get(position).getRestaurant().getId_restaurant()));
                 if(quanty > 1){
@@ -88,10 +93,13 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
                 holder.manager.setDishes(gson.toJson(map));
             }
         }
+        RestaurantFragment.showMessage();
     }
 
     private void addProduct(int position, DishAdapter.viewHolder holder) {
         String json = holder.manager.getDishes();
+        holder.manager.setQ(holder.manager.getQ()+1);
+        holder.manager.setPrice(holder.manager.getPrice()+dishes.get(position).getPrice());
         if(!json.isEmpty()){
             Gson gson = new Gson();
             HashMap<String, String> map = gson.fromJson(json, HashMap.class);
@@ -116,6 +124,7 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
             Log.d("JSON", json1);
             holder.manager.setDishes(json1);
         }
+        RestaurantFragment.showMessage();
     }
 
     @Override
@@ -129,6 +138,8 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
         TextView name;
         TextView price;
         TextView quantity;
+        TextView quanty;
+        TextView total;
         Button addQuantity, delQuantity;
         SessionManager manager;
 

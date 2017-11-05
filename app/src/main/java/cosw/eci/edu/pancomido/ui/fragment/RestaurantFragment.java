@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.network.RequestCallback;
 import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
+import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.misc.loadImage;
 import cosw.eci.edu.pancomido.ui.activity.LoginActivity;
 
@@ -48,12 +50,13 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private View view;
+    private static View view;
     private ImageView restaurantImage;
     private TextView restaurantName;
     private Button menu, comments;
     private RecyclerView listView;
     private LinearLayout progressBar, name, restaurant_options;
+    private static SessionManager sessionManager;
     private Bundle args;
 
     private OnFragmentInteractionListener mListener;
@@ -89,6 +92,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_restaurant, container, false);
         args = this.getArguments();
+        sessionManager = new SessionManager(getActivity());
         progressBar = (LinearLayout) view.findViewById(R.id.linearProgressBar);
         name = (LinearLayout) view.findViewById(R.id.name);
         restaurantImage = (ImageView) view.findViewById(R.id.restaurant_image);
@@ -108,6 +112,23 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    public static void showMessage(){
+        Snackbar snackbar = Snackbar
+                .make(view, "See order ("+sessionManager.getQ()+") Total: "+sessionManager.getPrice(), Snackbar.LENGTH_LONG)
+                .setAction("Go", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToOrderDetail();
+                Log.d("TODOOOOOOOOO", "TOPDOOOOOOOOO");
+            }
+        });
+
+        snackbar.show();
+    }
+
+    private static void goToOrderDetail() {
     }
 
     @Override
