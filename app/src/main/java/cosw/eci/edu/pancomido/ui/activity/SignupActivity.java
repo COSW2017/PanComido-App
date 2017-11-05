@@ -1,6 +1,8 @@
 package cosw.eci.edu.pancomido.ui.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +34,9 @@ public class SignupActivity extends AppCompatActivity {
 
     Button signupButton;
     TextView loginLink;
+    TextView tycLink;
+
+
 
     Spinner citySpinner;
 
@@ -47,6 +52,8 @@ public class SignupActivity extends AppCompatActivity {
 
         signupButton = (Button) findViewById(R.id.btn_signup);
         loginLink = (TextView) findViewById(R.id.link_login);
+        tycLink = (TextView) findViewById(R.id.input_tyc_link);
+
         passwordText = (EditText) findViewById(R.id.input_password);
 
         // Get ListView object from xml
@@ -72,6 +79,25 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
                 finish();
+            }
+        });
+
+        tycLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
+                builder.setMessage("Terms and conditions\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed posuere libero eros, eget mollis augue gravida quis. Donec quam massa, posuere eu eros et, dapibus tristique magna. Fusce dignissim massa ac tellus rhoncus maximus. Praesent sed viverra purus, et varius libero. Nullam molestie imperdiet lacus nec mattis. Sed vel egestas metus. Nulla quis cursus lectus. Aenean consequat mollis arcu nec fringilla. Etiam id ipsum ornare, auctor metus sit amet, hendrerit risus.\n" +
+                        "\n" +
+                        "Curabitur lorem erat, consequat sit amet convallis vitae, eleifend sed metus. Nulla facilisi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec gravida semper scelerisque. Duis elementum accumsan dui at commodo. Sed egestas non tortor a vulputate. Curabitur dignissim auctor lorem, sit amet iaculis orci tristique eu. Cras sapien tellus, lobortis in tincidunt quis, venenatis ut tellus. Suspendisse sed vehicula turpis. Ut blandit mauris et finibus mattis. Curabitur eu ultricies enim, eu porttitor mi.\n" +
+                        "\n" +
+                        "Maecenas luctus auctor neque et semper. Sed at dapibus orci. Phasellus quis consectetur ipsum. In ultricies convallis nibh non sagittis. Ut vel enim augue. Nam sed sapien vel justo sodales blandit. Nullam a velit et neque condimentum condimentum.\n" +
+                        "\n" +
+                        "Duis a lectus imperdiet, suscipit magna ac, condimentum purus. Phasellus viverra ipsum ac mi pretium ultrices. Nulla quis est tincidunt, ullamcorper erat in, ultrices velit. Donec tristique non nulla non lobortis. Phasellus dui lorem, porta at dui imperdiet, semper pellentesque neque. In hac habitasse platea dictumst. Nullam pretium nisi et tempus sollicitudin. In hac habitasse platea dictumst. Aenean in dapibus ipsum, non finibus nunc. Praesent vulputate ante et tempor egestas. Morbi facilisis in neque at congue. Vivamus commodo dignissim ipsum.\n" +
+                        "\n" +
+                        "Cras justo mi, consequat ac facilisis at, congue porta justo. Fusce feugiat vehicula arcu sit amet condimentum. Cras a aliquam tortor. Mauris faucibus enim ac laoreet posuere. Cras nibh odio, consectetur at tellus ac, porta molestie lectus. Nam at velit aliquet augue dapibus sagittis. Nunc non euismod ligula. Proin eu magna finibus, dignissim nisi sit amet, posuere turpis. Donec lacinia risus eu tincidunt pulvinar. Donec accumsan nisl ac justo imperdiet pharetra. Fusce justo augue, tincidunt at malesuada et, vehicula ac leo. Donec tincidunt sagittis velit, sit amet euismod justo auctor eu. Nunc sed mattis ipsum. Suspendisse rhoncus mi risus, id tincidunt nibh interdum sit amet. Ut a eros sit amet magna facilisis tincidunt. Pellentesque suscipit felis feugiat magna facilisis consequat.");
+
+                // Create the AlertDialog object and return it
+                builder.show();
             }
         });
 

@@ -87,12 +87,6 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
         super.onCreate(savedInstanceState);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         sessionManager = new SessionManager(getActivity());
-        /*if(sessionManager.location()){
-            Map<String, String> map = sessionManager.getLocation();
-            getNearRestaurants(Float.parseFloat(map.get(sessionManager.LATITUDE)), Float.parseFloat(map.get(sessionManager.LONGITUDE+"")));
-        }else{
-            showMyLocation();
-        }*/
     }
 
     @SuppressWarnings("MissingPermission")
@@ -240,6 +234,7 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
     }
 
     private void getNearRestaurants(Float lat, Float lo) {
+        showDialog();
         RetrofitNetwork retrofitNetwork = new RetrofitNetwork();
         RequestCallback<List<Restaurant>> rc = new RequestCallback<List<Restaurant>>() {
             @Override

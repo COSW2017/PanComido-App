@@ -96,7 +96,6 @@ public class Restaurant {
         this.angry = angry;
     }
 
-
     public User getUser_id() {
         return user_id;
     }
