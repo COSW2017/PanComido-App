@@ -24,7 +24,7 @@ import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
  * Created by estudiante on 3/9/17.
  */
 
-public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.viewHolder> implements View.OnClickListener {
+public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.viewHolder> {
 
     private List<Restaurant> restaurants;
 
@@ -53,7 +53,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
                 bundle.putString("name",r.getName());
                 fragment.setArguments(bundle);
                 FragmentManager manager = ((Activity) v.getContext()).getFragmentManager();
-                manager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                manager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack("lista").commit();
                 Toast.makeText(v.getContext(), "", Toast.LENGTH_SHORT).show();
             }
         });

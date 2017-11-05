@@ -55,6 +55,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
     private Button menu, comments;
     private RecyclerView listView;
     private LinearLayout progressBar, name, restaurant_options;
+    private Bundle args;
 
     private OnFragmentInteractionListener mListener;
 
@@ -73,20 +74,14 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
     // TODO: Rename and change types and number of parameters
     public static RestaurantFragment newInstance(String param1, String param2) {
         RestaurantFragment fragment = new RestaurantFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
@@ -94,6 +89,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_restaurant, container, false);
+        args = this.getArguments();
         progressBar = (LinearLayout) view.findViewById(R.id.linearProgressBar);
         name = (LinearLayout) view.findViewById(R.id.name);
         restaurantImage = (ImageView) view.findViewById(R.id.restaurant_image);
@@ -149,7 +145,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         comments.setTypeface(null, Typeface.NORMAL);
         menu.setTypeface(null, Typeface.BOLD);
         final RetrofitNetwork r = new RetrofitNetwork();
-        r.getRestaurantInformation("Tierra Colombiana", new RequestCallback<Restaurant>() {
+        r.getRestaurantInformation(args.get("name")+"", new RequestCallback<Restaurant>() {
             @Override
             public void onSuccess(final Restaurant response) {
                 Log.d("Restaurant", response.getId_restaurant()+"");
@@ -170,7 +166,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
                             @Override
                             public void run() {
                                 configureRecyclerView(response);
-
+                                showElements();
                             }
                         });
                     }
@@ -208,7 +204,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         }catch(Exception e){
             System.out.println(e);
         }
-        showElements();
+
     }
 
     /**
@@ -225,4 +221,6 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }

@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Map;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.adapter.RestaurantListAdapter;
@@ -31,6 +32,7 @@ import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.network.RequestCallback;
 import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
+import cosw.eci.edu.pancomido.misc.SessionManager;
 
 
 /**
@@ -55,6 +57,7 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
     private Float latitudeBest;
     private Button refreshButton;
     private ProgressDialog progressDialog;
+    private SessionManager sessionManager;
 
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout swipeLayout;
@@ -83,7 +86,13 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        showMyLocation();
+        sessionManager = new SessionManager(getActivity());
+        /*if(sessionManager.location()){
+            Map<String, String> map = sessionManager.getLocation();
+            getNearRestaurants(Float.parseFloat(map.get(sessionManager.LATITUDE)), Float.parseFloat(map.get(sessionManager.LONGITUDE+"")));
+        }else{
+            showMyLocation();
+        }*/
     }
 
     @SuppressWarnings("MissingPermission")
@@ -111,8 +120,8 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
             }
         });
 
-         LocationListener locationListenerBest = new LocationListener() {
-            public void onLocationChanged(Location location) {
+        LocationListener locationListenerBest = new LocationListener() {
+            public void onLocationChanged(final Location location) {
                 longitudeBest = Float.parseFloat(location.getLongitude()+"");
                 latitudeBest = Float.parseFloat(location.getLatitude()+"");
 
@@ -124,6 +133,7 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
                             @Override
                             public void run() {
                                 configureRecyclerView(response);
+                                sessionManager.setLocation(longitudeBest+"", latitudeBest+"");
                             }
                         });
                     }
@@ -220,8 +230,39 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
                 getResources().getColor(android.R.color.holo_green_light),
                 getResources().getColor(android.R.color.holo_orange_light),
                 getResources().getColor(android.R.color.holo_red_light));
-
+        if(sessionManager.location()){
+            Map<String, String> map = sessionManager.getLocation();
+            getNearRestaurants(Float.parseFloat(map.get(sessionManager.LATITUDE)), Float.parseFloat(map.get(sessionManager.LONGITUDE+"")));
+        }else{
+            showMyLocation();
+        }
         return view;
+    }
+
+    private void getNearRestaurants(Float lat, Float lo) {
+        RetrofitNetwork retrofitNetwork = new RetrofitNetwork();
+        RequestCallback<List<Restaurant>> rc = new RequestCallback<List<Restaurant>>() {
+            @Override
+            public void onSuccess(final List<Restaurant> response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        configureRecyclerView(response);
+                    }
+                });
+            }
+            @Override
+            public void onFailed(NetworkException e) {
+            }
+        };
+        retrofitNetwork.getRestaurants(lat, lo, rc);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                hideDialog();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -249,6 +290,12 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
     public void onRefresh() {
         showMyLocation();
         progressDialog.dismiss();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
     }
 
