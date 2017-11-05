@@ -39,6 +39,9 @@ interface NetworkService
     @GET("restaurant/{idRestaurant}/dish")
     Call<List<Dish>> getRestaurantDishes(@Path("idRestaurant") int idRestaurant);
 
+    @GET("restaurant/{idRestaurant}/dish/{idDish}")
+    Call<Dish> getDishById(@Path("idRestaurant") int idRestaurant, @Path("idDish") int idDish);
+
     @GET("restaurant/near/{latitude}/{longitude}")
     Call<List<Restaurant>> getRestaurants(@Path("latitude") Float latitude,
                                           @Path("longitude") Float longitude);

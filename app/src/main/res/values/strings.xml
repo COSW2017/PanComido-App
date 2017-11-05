@@ -37,4 +37,7 @@
     <string name="friends_pay">Dividir el pago con mis amigos</string>
     <string name="pay">Pagar</string>
     <string name="minus">-</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back_to_menu">Volver al menú principal</string>
+    <string name="payment_success">Gracias por tu orden! Puedes volver al menú principal y esperar que tu orden esté lista.</string>
 </resources>
