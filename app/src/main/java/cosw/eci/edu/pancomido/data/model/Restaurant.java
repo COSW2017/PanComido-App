@@ -15,7 +15,7 @@ public class Restaurant {
     private Integer dislike;
     private Integer love;
     private Integer angry;
-
+    private String image;
     private User user_id;
 
     public Restaurant(Integer id_restaurant, String name, Float latitude, Float longitude, Integer like, Integer dislike, Integer love, Integer angry) {
@@ -103,6 +103,14 @@ public class Restaurant {
 
     public void setUser_id(User user_id) {
         this.user_id = user_id;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     /*public List<Order> getOrders() {
