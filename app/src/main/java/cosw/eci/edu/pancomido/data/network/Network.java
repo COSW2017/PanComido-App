@@ -27,7 +27,11 @@ public interface Network
 
     void getRestaurantDishes(Integer idRestaurant, RequestCallback<List<Dish>> requestCallback);
 
+    void getDishById(Integer idRestaurant, Integer idDish, RequestCallback<Dish> requestCallback);
+
     void getRestaurants(Float latitude, Float longitude, RequestCallback<List<Restaurant>> requestCallback);
 
     void getFriends(String userMail, RequestCallback<List<User>> requestCallback);
+
+    void getUserByEmail(String user, RequestCallback<User> requestCallback);
 }

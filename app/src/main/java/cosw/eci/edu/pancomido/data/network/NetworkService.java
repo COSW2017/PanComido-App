@@ -33,11 +33,17 @@ interface NetworkService
     @POST( "user/register" )
     Call<User> createUser(@Body User user);
 
+    @POST("user/search")
+    Call<User> getUserByEmail(@Body String email);
+
     @GET("restaurant/{name}")
     Call<Restaurant> getRestaurantInformation(@Path("name") String name);
 
     @GET("restaurant/{idRestaurant}/dish")
     Call<List<Dish>> getRestaurantDishes(@Path("idRestaurant") int idRestaurant);
+
+    @GET("restaurant/{idRestaurant}/dish/{idDish}")
+    Call<Dish> getDishById(@Path("idRestaurant") int idRestaurant, @Path("idDish") int idDish);
 
     @GET("restaurant/near/{latitude}/{longitude}")
     Call<List<Restaurant>> getRestaurants(@Path("latitude") Float latitude,

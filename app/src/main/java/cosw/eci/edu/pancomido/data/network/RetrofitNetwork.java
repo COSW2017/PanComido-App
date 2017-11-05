@@ -174,6 +174,27 @@ public class RetrofitNetwork
     }
 
     @Override
+    public void getDishById(final Integer idRestaurant, final Integer idDish, final RequestCallback<Dish> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getDishById(idRestaurant, idDish);
+                try
+                {
+                    Response<Dish> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
     public void getRestaurants(final Float latitude, final Float longitude, final RequestCallback<List<Restaurant>> requestCallback) {
         backgroundExecutor.execute( new Runnable()
         {
@@ -206,6 +227,27 @@ public class RetrofitNetwork
                 try
                 {
                     Response<List<User>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void getUserByEmail(final String user, final RequestCallback<User> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getUserByEmail(user);
+                try
+                {
+                    Response<User> execute = call.execute();
                     requestCallback.onSuccess( execute.body() );
                 }
                 catch ( IOException e )
