@@ -18,4 +18,6 @@ public interface Network
     void createTodo(Todo todo, RequestCallback requestCallback);
 
     void getTodoList(RequestCallback<List<Todo>> requestCallback);
+
+    void createUser(User user, RequestCallback<User> requestCallback);
 }

@@ -107,6 +107,27 @@ public class RetrofitNetwork
         } );
     }
 
+    @Override
+    public void createUser(final User user, final RequestCallback<User> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.createUser( user );
+                try
+                {
+                    Response<User> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
     public void addSecureTokenInterceptor( final String token )
     {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();

@@ -26,4 +26,7 @@ interface NetworkService
 
     @POST( "api/todo" )
     Call createTodo(@Body Todo todo);
+
+    @POST( "user/register" )
+    Call<User> createUser(@Body User user);
 }

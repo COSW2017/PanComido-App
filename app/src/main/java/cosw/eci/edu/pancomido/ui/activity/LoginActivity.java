@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Token;
 import cosw.eci.edu.pancomido.data.model.User;
@@ -37,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     SessionManager session;
+    TextView signupLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,17 @@ public class LoginActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
+            }
+        });
+
+        signupLink = (TextView) findViewById(R.id.link_signup);
+
+        signupLink.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+                startActivity(intent);
             }
         });
 
