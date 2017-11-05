@@ -4,21 +4,55 @@
     android:layout_height="match_parent"
     tools:context="cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment">
 
+    <LinearLayout
+        android:id="@+id/linearProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/progressbar" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/Loading"/>
+    </LinearLayout>
+
+
     <ImageView
         android:id="@+id/restaurant_image"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_gravity="top|start"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_launcher"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        />
 
     <LinearLayout
+        android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_gravity="top|end"
         android:layout_marginEnd="50dp"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="30dp"
-        android:background="@color/white_transparent">
+        android:layout_marginTop="50dp"
+        android:background="@color/white_transparent"
+        android:visibility="gone"
+        >
 
         <TextView
             android:id="@+id/restaurant_name"
@@ -27,7 +61,7 @@
             android:text="@string/nombre_del_restaurante"
             android:textAlignment="center"
             android:textSize="25sp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical" />
     </LinearLayout>
 
     <LinearLayout
@@ -35,8 +69,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/restaurant_image"
-        android:background="@color/colorPrimary">
+        android:layout_below="@id/name"
+        android:background="@color/colorPrimary"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/restaurant_menu"
@@ -60,13 +95,13 @@
             android:textColor="@android:color/white"/>
     </LinearLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/restaurant_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/restaurant_options">
-
-    </ListView>
+        android:scrollbars="vertical"
+        android:layout_below="@id/restaurant_options"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

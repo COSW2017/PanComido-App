@@ -7,23 +7,28 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.adapter.DishAdapter;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.network.RequestCallback;
 import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
+import cosw.eci.edu.pancomido.misc.loadImage;
 import cosw.eci.edu.pancomido.ui.activity.LoginActivity;
 
 
@@ -48,7 +53,8 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
     private ImageView restaurantImage;
     private TextView restaurantName;
     private Button menu, comments;
-    private ListView listView;
+    private RecyclerView listView;
+    private LinearLayout progressBar, name, restaurant_options;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,11 +94,16 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_restaurant, container, false);
+        progressBar = (LinearLayout) view.findViewById(R.id.linearProgressBar);
+        name = (LinearLayout) view.findViewById(R.id.name);
+        restaurantImage = (ImageView) view.findViewById(R.id.restaurant_image);
         menu = (Button) view.findViewById(R.id.restaurant_menu);
         comments = (Button) view.findViewById(R.id.restaurant_comments);
         restaurantName = (TextView) view.findViewById(R.id.restaurant_name);
+        restaurant_options = (LinearLayout) view.findViewById(R.id.restaurant_options);
         menu.setOnClickListener(this);
         comments.setOnClickListener(this);
+
         showMenu();
         return view;
     }
@@ -146,14 +157,22 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void run() {
                         restaurantName.setText(response.getName());
+                        new loadImage(restaurantImage).execute(response.getImage());
                     }
                 });
                 r.getRestaurantDishes(response.getId_restaurant(), new RequestCallback<List<Dish>>() {
                     @Override
-                    public void onSuccess(List<Dish> response) {
+                    public void onSuccess(final List<Dish> response) {
                         for(Dish dish : response){
                             Log.d("Dish", dish.getName());
                         }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                configureRecyclerView(response);
+
+                            }
+                        });
                     }
                     @Override
                     public void onFailed(NetworkException e) {
@@ -167,6 +186,29 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
                 e.printStackTrace();
             }
         });
+    }
+
+    private void showElements() {
+        progressBar.setVisibility(View.GONE);
+        restaurantImage.setVisibility(View.VISIBLE);
+        name.setVisibility(View.VISIBLE);
+        restaurant_options.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.VISIBLE);
+    }
+
+    private void configureRecyclerView(List<Dish> dishes){
+        listView = (RecyclerView) view.findViewById(R.id.restaurant_list);
+        listView.setHasFixedSize( true );
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        listView.setLayoutManager( layoutManager );
+        try {
+            DishAdapter dishAdapter = new DishAdapter(dishes);
+            listView.setAdapter(dishAdapter);
+
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        showElements();
     }
 
     /**
