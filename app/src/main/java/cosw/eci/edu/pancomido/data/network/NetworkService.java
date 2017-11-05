@@ -2,6 +2,7 @@ package cosw.eci.edu.pancomido.data.network;
 
 import java.util.List;
 
+import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.Todo;
@@ -28,6 +29,14 @@ interface NetworkService
 
     @POST( "api/todo" )
     Call createTodo(@Body Todo todo);
+
+    @GET("restaurant/{name}")
+    Call<Restaurant> getRestaurantInformation(@Path("name") String name);
+
+    @GET("restaurant/{idRestaurant}/dish")
+    Call<List<Dish>> getRestaurantDishes(@Path("idRestaurant") int idRestaurant);
+
+
 
     @GET( "restaurant/near/{latitude}/{longitude}")
     Call<List<Restaurant>> getRestaurants(@Path("latitude") Float latitude,

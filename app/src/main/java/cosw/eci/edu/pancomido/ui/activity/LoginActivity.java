@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    SessionManager session;
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
