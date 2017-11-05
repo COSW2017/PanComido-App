@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,6 +32,12 @@ public class MainActivity extends AppCompatActivity
     public static RestaurantFragment restaurantFragment = new RestaurantFragment();
     private SessionManager session;
 
+    String[] permissions = { android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION };
+
+    private final int ACCESS_LOCATION_PERMISSION_CODE=1;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +52,29 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        ActivityCompat.requestPermissions(this,  permissions, ACCESS_LOCATION_PERMISSION_CODE);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.fragment_container, restaurantListFragment).addToBackStack(null).commit();
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        for ( int grantResult : grantResults ) {
+            if ( grantResult == -1 ){
+                return;
+            }
+        }
+        switch ( requestCode )
+        {
+            case ACCESS_LOCATION_PERMISSION_CODE:
+                FragmentManager manager = getFragmentManager();
+                manager.beginTransaction().replace(R.id.fragment_container, restaurantListFragment).addToBackStack(null).commit();
+                break;
+            default:
+                super.onRequestPermissionsResult( requestCode, permissions, grantResults );
+        }
     }
 
     @Override
