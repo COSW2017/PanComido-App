@@ -2,6 +2,15 @@ package cosw.eci.edu.pancomido.misc;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import cosw.eci.edu.pancomido.data.model.Command;
+import cosw.eci.edu.pancomido.data.model.Command_Dish;
 
 /**
  * Created by Alejandra on 31/10/2017.
@@ -20,6 +29,11 @@ public class SessionManager {
     private static final String PREF_NAME = "AndroidHivePref";
 
     private static final String TOKEN = "token";
+    public static final String LATITUDE = "lat";
+    public static final String LONGITUDE = "long";
+    public static final String ORDER = "order";
+    public static final String COMMANDS = "command";
+    public static final String DISHES = "dishes";
 
     private static final String EMAIL = "email";
 
@@ -58,4 +72,51 @@ public class SessionManager {
         editor.clear();
         editor.commit();
     }
+
+    public void setLocation(String longitude, String latitude){
+        editor.putString(LONGITUDE, longitude);
+        editor.putString(LATITUDE, latitude);
+        editor.commit();
+    }
+
+    public Map<String, String> getLocation(){
+        Map<String, String> location = new HashMap<>();
+        location.put(LONGITUDE, pref.getString(LONGITUDE, ""));
+        location.put(LATITUDE, pref.getString(LATITUDE, ""));
+        return location;
+    }
+
+    public Boolean location(){
+        return !pref.getString(LONGITUDE, "").isEmpty();
+    }
+
+    public void initOrder(String order){
+        editor.putString(ORDER, order);
+        editor.commit();
+    }
+
+    public Boolean orderCreated(){
+        return !pref.getString(ORDER, "").isEmpty();
+    }
+
+   public void setCommands(String commands){
+       editor.putString(COMMANDS, commands);
+       editor.commit();
+   }
+
+   public String getCommands(){
+       return pref.getString(COMMANDS, "");
+   }
+
+    public void setDishes(String commands){
+        editor.putString(DISHES, commands);
+        Log.d("coooooom", commands);
+        editor.commit();
+    }
+
+    public String getDishes(){
+        return pref.getString(DISHES, "");
+    }
+
+
 }

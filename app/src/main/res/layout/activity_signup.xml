@@ -84,11 +84,27 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
             android:hint="Password"/>
     </android.support.design.widget.TextInputLayout>
 
-    <CheckBox
-        android:id="@+id/input_tandc"
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="I accept the Terms and conditions" />
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/input_tandc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/input_tyc_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="I accept the terms and conditions"/>
+
+    </LinearLayout>
 
     <!-- Signup Button -->
     <Button

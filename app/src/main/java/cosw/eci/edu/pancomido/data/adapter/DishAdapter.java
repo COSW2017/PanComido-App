@@ -10,21 +10,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.model.Command_Dish;
 import cosw.eci.edu.pancomido.data.model.Dish;
+import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.misc.loadImage;
+import cosw.eci.edu.pancomido.ui.activity.MainActivity;
 
 /**
  * Created by Alejandra on 4/11/2017.
  */
 
-public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder>{
+public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
 
     private final List<Dish> dishes;
 
@@ -42,11 +49,73 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(DishAdapter.viewHolder holder, int position) {
+    public void onBindViewHolder(final DishAdapter.viewHolder holder, final int position) {
         Dish dish = dishes.get(position);
         holder.setDishImage(dish.getImage());
         holder.setName(dish.getName());
         holder.setPrice(dish.getPrice()+"");
+        holder.addQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addProduct(position, holder);
+            }
+        });
+        holder.delQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delProduct(position, holder);
+            }
+        });
+    }
+
+    private void delProduct(int position, DishAdapter.viewHolder holder) {
+        String json = holder.manager.getDishes();
+        if(!json.isEmpty()){
+            Gson gson = new Gson();
+            HashMap<String, String> map = gson.fromJson(json, HashMap.class);
+            if(map.containsKey(dishes.get(position).getId_dish()+
+                    ","+dishes.get(position).getRestaurant().getId_restaurant())){
+                int quanty = Integer.parseInt(map.get(dishes.get(position).getId_dish()+
+                        ","+dishes.get(position).getRestaurant().getId_restaurant()));
+                if(quanty > 1){
+                    quanty-=1;
+                    map.put(dishes.get(position).getId_dish()
+                            +","+dishes.get(position).getRestaurant().getId_restaurant()+"", quanty+"");
+                }else {
+                    map.remove(dishes.get(position).getId_dish()+","+
+                            dishes.get(position).getRestaurant().getId_restaurant());
+                }
+                holder.manager.setDishes(gson.toJson(map));
+            }
+        }
+    }
+
+    private void addProduct(int position, DishAdapter.viewHolder holder) {
+        String json = holder.manager.getDishes();
+        if(!json.isEmpty()){
+            Gson gson = new Gson();
+            HashMap<String, String> map = gson.fromJson(json, HashMap.class);
+            if(map.containsKey(dishes.get(position).getId_dish()+
+                    ","+dishes.get(position).getRestaurant().getId_restaurant())){
+                int quanty = Integer.parseInt(map.get(dishes.get(position).getId_dish()+
+                        ","+dishes.get(position).getRestaurant().getId_restaurant()));
+                quanty+=1;
+                map.put(dishes.get(position).getId_dish()
+                        +","+dishes.get(position).getRestaurant().getId_restaurant(), quanty+"");
+            }else{
+                map.put(dishes.get(position).getId_dish()
+                        +","+dishes.get(position).getRestaurant().getId_restaurant(), "1");
+            }
+            holder.manager.setDishes(gson.toJson(map));
+        }else {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(dishes.get(position).getId_dish()+
+                    ","+dishes.get(position).getRestaurant().getId_restaurant()+"", "1");
+            Gson gson = new Gson();
+            String json1 = gson.toJson(map);
+            Log.d("JSON", json1);
+            holder.manager.setDishes(json1);
+        }
     }
 
     @Override
@@ -54,22 +123,29 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder>{
         return dishes.size();
     }
 
-    class viewHolder extends RecyclerView.ViewHolder {
+    class viewHolder extends RecyclerView.ViewHolder{
 
         ImageView image;
         TextView name;
         TextView price;
+        TextView quantity;
+        Button addQuantity, delQuantity;
+        SessionManager manager;
+
 
         public viewHolder(View itemView) {
             super(itemView);
             image = (ImageView) itemView.findViewById(R.id.dish_image);
             name = (TextView) itemView.findViewById(R.id.dish_name);
             price = (TextView) itemView.findViewById(R.id.dish_price);
+            quantity = (TextView) itemView.findViewById(R.id.dish_quantity);
+            addQuantity = (Button) itemView.findViewById(R.id.add_product);
+            delQuantity = (Button) itemView.findViewById(R.id.del_product);
+            manager = new SessionManager(itemView.getContext());
         }
 
         public void setDishImage(String url) {
             new loadImage(image).execute(url);
-
         }
 
         public void setName(String name){
@@ -80,6 +156,9 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder>{
             this.price.setText("$ "+price);
         }
 
+        public SessionManager getManager(){
+            return manager;
+        }
 
     }
 }
