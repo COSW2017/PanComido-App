@@ -2,8 +2,11 @@ package cosw.eci.edu.pancomido.data.network;
 
 import java.util.List;
 
+import cosw.eci.edu.pancomido.data.model.Command;
+import cosw.eci.edu.pancomido.data.model.Command_Dish;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
+import cosw.eci.edu.pancomido.data.model.Order;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.Todo;
 import cosw.eci.edu.pancomido.data.model.Token;
@@ -51,5 +54,14 @@ interface NetworkService
 
     @GET("user/{email}/friends")
     Call<List<User>> getFriends(@Path("email") String userMail);
+
+    @POST( "restaurant/command" )
+    Call<Command> addCommand(@Body Command command);
+
+    @POST( "user/order" )
+    Call<Order> addOrder(@Body Order order);
+
+    @POST( "commandDish/{id_command}/{id_dish}" )
+    Call<Boolean> addCommandDish(@Path("id_command") Integer id_command, @Path("id_dish")  Integer id_dish);
 
 }

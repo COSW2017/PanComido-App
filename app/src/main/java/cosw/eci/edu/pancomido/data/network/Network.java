@@ -2,8 +2,11 @@ package cosw.eci.edu.pancomido.data.network;
 
 import java.util.List;
 
+import cosw.eci.edu.pancomido.data.model.Command;
+import cosw.eci.edu.pancomido.data.model.Command_Dish;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
+import cosw.eci.edu.pancomido.data.model.Order;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.Todo;
 import cosw.eci.edu.pancomido.data.model.Token;
@@ -34,4 +37,10 @@ public interface Network
     void getFriends(String userMail, RequestCallback<List<User>> requestCallback);
 
     void getUserByEmail(String user, RequestCallback<User> requestCallback);
+
+    void addCommand(Command command, RequestCallback<Command> requestCallback);
+
+    void addOrder(Order order, RequestCallback<Order> requestCallback);
+
+    void addCommandDish(Integer idDish, Integer idCommand, RequestCallback<Boolean> requestCallback);
 }

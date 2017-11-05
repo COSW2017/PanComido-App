@@ -5,10 +5,13 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,14 +28,20 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.model.Command;
+import cosw.eci.edu.pancomido.data.model.Command_Dish;
 import cosw.eci.edu.pancomido.data.model.Dish;
+import cosw.eci.edu.pancomido.data.model.Order;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.User;
 import cosw.eci.edu.pancomido.data.network.RequestCallback;
@@ -67,6 +76,9 @@ public class PaymentFragment extends Fragment{
     private ArrayList<boolean[]> booleans_final;
     private List<User> friends_list;
     private int total_dishes;
+
+    private SessionManager sessionManager;
+    private HashMap<String, String> map;
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -103,12 +115,12 @@ public class PaymentFragment extends Fragment{
         findFriends = (SearchView) view.findViewById(R.id.find_friends);
         friends = (ListView) view.findViewById(R.id.friend_list);
         pay = (Button) view.findViewById(R.id.pay_button);
+        sessionManager = new SessionManager(getActivity());
 
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager manager = getFragmentManager();
-                manager.beginTransaction().replace(R.id.fragment_container, new PaymentSuccessFragment()).addToBackStack(null).commit();
+                finishPayment ();
             }
         });
 
@@ -182,7 +194,7 @@ public class PaymentFragment extends Fragment{
 
         Gson gson = new Gson();
         SessionManager sessionManager = new SessionManager(getActivity());
-        HashMap<String, String> map = gson.fromJson(sessionManager.getDishes(), HashMap.class);
+        map = gson.fromJson(sessionManager.getDishes(), HashMap.class);
         System.out.println(map);
 
         dishes = new ArrayList<>();
@@ -256,6 +268,7 @@ public class PaymentFragment extends Fragment{
                                 String dish = dishes_info.get(which).getId_dish()+","+which;
                                 String friend = friends_list.get(position).getUser_id() + "";
                                 if (isChecked) {
+
                                     // If the user checked the item, add it to the selected items
 
                                     List<String> users_added = mSelectedItems.get(dish);
@@ -281,6 +294,93 @@ public class PaymentFragment extends Fragment{
             }
         });
         return view;
+    }
+
+    private void finishPayment() {
+
+        final RetrofitNetwork network = new RetrofitNetwork();
+
+        RequestCallback<Order> rc_order = new RequestCallback<Order>() {
+            @Override
+            public void onSuccess(Order response) {
+                Order order = response;
+
+                RequestCallback<Command> rc_command = new RequestCallback<Command>() {
+                    @Override
+                    public void onSuccess(Command respons) {
+                        Command command = respons;
+
+                        for(Map.Entry<String, String> entry : map.entrySet()) {
+                            String[] key = entry.getKey().split(",");
+                            final Integer cant = Integer.parseInt(entry.getValue());
+                            Integer id_rest = Integer.parseInt(key[1]);
+                            final Integer id_dish = Integer.parseInt(key[0]);
+
+                            for (int i = 0 ; i < cant; i++){
+                                RequestCallback<Boolean> rc_command_dish = new RequestCallback<Boolean>() {
+                                    @Override
+                                    public void onSuccess(Boolean response) {
+                                        if(response){
+                                            System.out.println(id_dish+" added");
+                                        }else{
+                                            System.out.println(id_dish+" not added");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailed(NetworkException e) {
+
+                                    }
+                                };
+                                System.out.println(command);
+                                network.addCommandDish(id_dish, command.getId_command(), rc_command_dish);
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailed(NetworkException e) {
+
+                    }
+                };
+
+                SimpleDateFormat sdf = new SimpleDateFormat(
+                        "yyyy-MM-dd");
+
+
+                Command command = new Command();
+                command.setCreation_date(sdf.format(new java.sql.Date(Calendar.getInstance().getTime().getTime())));
+
+                command.setId_order(order);
+                command.setState(1);
+
+                network.addCommand(command, rc_command);
+            }
+
+            @Override
+            public void onFailed(NetworkException e) {
+
+            }
+        };
+
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                "yyyy-MM-dd");
+
+        Order toRegister = new Order();
+        User u = new User();
+        u.setUser_id(Integer.parseInt(sessionManager.getUserId()));
+        toRegister.setCreation_date(sdf.format(new java.sql.Date(Calendar.getInstance().getTime().getTime())));
+        toRegister.setUser_id(u);
+
+        network.addOrder(toRegister, rc_order);
+
+
+
+        FragmentManager manager = getFragmentManager();
+        manager.beginTransaction().replace(R.id.fragment_container, new PaymentSuccessFragment()).addToBackStack(null).commit();
+
+
     }
 
     private void dishResponse(Dish response, int cant) {

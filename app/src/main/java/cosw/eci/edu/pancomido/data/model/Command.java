@@ -8,13 +8,13 @@ public class Command {
     private int id_command;
 
     private Integer state;
-    private Date creation_date;
+    private String creation_date;
 
     private Order id_order;
 
     public Command(){ }
 
-    public Command(int idPedido, List <Dish> platos){
+    public Command(int idPedido){
         this.id_command = idPedido;
     } //¿Se necesitan los platos o no?
 
@@ -34,11 +34,11 @@ public class Command {
         this.state = state;
     }
 
-    public Date getCreation_date() {
+    public String getCreation_date() {
         return creation_date;
     }
 
-    public void setCreation_date(Date creation_date) {
+    public void setCreation_date(String creation_date) {
         this.creation_date = creation_date;
     }
 
