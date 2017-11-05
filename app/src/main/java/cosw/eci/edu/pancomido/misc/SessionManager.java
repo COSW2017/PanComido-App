@@ -18,6 +18,7 @@ import cosw.eci.edu.pancomido.data.model.Command_Dish;
 
 public class SessionManager {
 
+    private static final String USER_ID = "user_id";
     SharedPreferences pref;
 
     SharedPreferences.Editor editor;
@@ -57,6 +58,12 @@ public class SessionManager {
         return email;
     }
 
+    public String setUserId(String user_id){
+        editor.putString(USER_ID, user_id);
+        editor.commit();
+        return user_id;
+    }
+
     public Boolean isLoggedIn(){
         String token = pref.getString(TOKEN, "");
         return !token.isEmpty();
@@ -69,6 +76,11 @@ public class SessionManager {
     public String getEmail(){
         return pref.getString(EMAIL, "");
     }
+
+    public String getUserId(){
+        return pref.getString(USER_ID, "");
+    }
+
 
     public void logoutUser(){
         editor.clear();
@@ -135,7 +147,7 @@ public class SessionManager {
     }
 
     public int getPrice(){
-        return pref.getInt(PRICE, -1);
+        return pref.getInt(PRICE, 0);
     }
 
 

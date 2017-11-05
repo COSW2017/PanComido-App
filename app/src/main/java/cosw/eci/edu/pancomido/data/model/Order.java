@@ -9,7 +9,7 @@ import java.util.Date;
 public class Order {
 
     private Integer id_order;
-    private Date creation_date;
+    private String creation_date;
 
     //private List<Command> commands; //Falta guardar los pedidos
 
@@ -83,11 +83,11 @@ public class Order {
         return ready;
     }
 
-    public Date getCreation_date() {
+    public String getCreation_date() {
         return creation_date;
     }
 
-    public void setCreation_date(Date creation_date) {
+    public void setCreation_date(String creation_date) {
         this.creation_date = creation_date;
     }
 

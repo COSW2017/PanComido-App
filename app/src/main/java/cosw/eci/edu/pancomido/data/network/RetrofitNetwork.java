@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cosw.eci.edu.pancomido.data.model.Command;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
+import cosw.eci.edu.pancomido.data.model.Order;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.Todo;
 import cosw.eci.edu.pancomido.data.model.Token;
@@ -30,7 +32,7 @@ public class RetrofitNetwork
         implements Network
 {
 
-    private static final String BASE_URL = "http://pancomido-cosw.herokuapp.com/";
+    private static final String BASE_URL = "http://pancomido-cosw.herokuapp.com";
 
     private NetworkService networkService;
 
@@ -248,6 +250,69 @@ public class RetrofitNetwork
                 try
                 {
                     Response<User> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void addCommand(final Command command, final RequestCallback<Command> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.addCommand(command);
+                try
+                {
+                    Response<Command> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void addOrder(final Order order, final RequestCallback<Order> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.addOrder(order);
+                try
+                {
+                    Response<Order> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void addCommandDish(final Integer idDish, final Integer idCommand, final RequestCallback<Boolean> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.addCommandDish(idDish, idCommand);
+                try
+                {
+                    Response<Boolean> execute = call.execute();
                     requestCallback.onSuccess( execute.body() );
                 }
                 catch ( IOException e )

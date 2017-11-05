@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        session.setUserId(""+response.getUser_id());
                         userName.setText(response.getFirstname()+" "+response.getLastname());
                         userEmail.setText(response.getEmail());
                         byte[] decodedString = Base64.decode(response.getImage(), Base64.DEFAULT);
@@ -156,8 +157,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            FragmentManager manager = getFragmentManager();
-            manager.beginTransaction().replace(R.id.fragment_container, new PaymentFragment()).addToBackStack(null).commit();
+            //FragmentManager manager = getFragmentManager();
+            //manager.beginTransaction().replace(R.id.fragment_container, new PaymentFragment()).addToBackStack(null).commit();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
