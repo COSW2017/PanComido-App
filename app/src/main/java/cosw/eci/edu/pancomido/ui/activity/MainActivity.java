@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.SessionManager;
+import cosw.eci.edu.pancomido.ui.fragment.PaymentFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantListFragment;
 
@@ -116,7 +117,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            FragmentManager manager = getFragmentManager();
+            manager.beginTransaction().replace(R.id.fragment_container, new PaymentFragment()).addToBackStack(null).commit();
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        final String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -154,6 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
                         String token = response.getAccessToken();
                         session.setToken(token);
+                        session.setEmail(email);
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(i);
                         finish();

@@ -195,6 +195,27 @@ public class RetrofitNetwork
 
     }
 
+    @Override
+    public void getFriends(final String userMail,final RequestCallback<List<User>> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getFriends(userMail);
+                try
+                {
+                    Response<List<User>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
     public void addSecureTokenInterceptor( final String token )
     {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();

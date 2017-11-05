@@ -32,4 +32,8 @@
     <string name="name_of_the_dish">Name of the dish</string>
     <string name="update">Update</string>
     <string name="Loading">Loading...</string>
+    <string name="payment_mode">Forma de pago</string>
+    <string name="i_pay">Yo invito</string>
+    <string name="friends_pay">Dividir el pago con mis amigos</string>
+    <string name="pay">Pagar</string>
 </resources>
