@@ -30,6 +30,9 @@ interface NetworkService
     @POST( "api/todo" )
     Call createTodo(@Body Todo todo);
 
+    @POST( "user/register" )
+    Call<User> createUser(@Body User user);
+
     @GET("restaurant/{name}")
     Call<Restaurant> getRestaurantInformation(@Path("name") String name);
 
@@ -39,4 +42,5 @@ interface NetworkService
     @GET( "restaurant/near/{latitude}/{longitude}")
     Call<List<Restaurant>> getRestaurants(@Path("latitude") Float latitude,
                                           @Path("longitude") Float longitude);
+
 }
