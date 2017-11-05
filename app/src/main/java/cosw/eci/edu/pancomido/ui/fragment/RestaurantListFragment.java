@@ -138,7 +138,7 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
                     @Override
                     public void run() {
 
-                        Toast.makeText(getActivity(), "Latitude "+longitudeBest+" "+latitudeBest, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "Latitude "+longitudeBest+" "+latitudeBest, Toast.LENGTH_SHORT).show();
                         swipeLayout.setRefreshing(false);
                         hideDialog();
                     }
@@ -214,20 +214,13 @@ public class RestaurantListFragment extends Fragment implements SwipeRefreshLayo
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_restaurant_list, container, false);
-        /*
-        refreshButton = (Button) view.findViewById(R.id.refresh);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMyLocation();
-            }
-        });*/
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(getResources().getColor(android.R.color.holo_blue_bright),
                 getResources().getColor(android.R.color.holo_green_light),
                 getResources().getColor(android.R.color.holo_orange_light),
                 getResources().getColor(android.R.color.holo_red_light));
+
         return view;
     }
 

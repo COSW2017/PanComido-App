@@ -1,23 +1,30 @@
 package cosw.eci.edu.pancomido.data.adapter;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.loadImage;
+import cosw.eci.edu.pancomido.ui.activity.MainActivity;
+import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 
 /**
  * Created by estudiante on 3/9/17.
  */
 
-public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.viewHolder> {
+public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.viewHolder> implements View.OnClickListener {
 
     private List<Restaurant> restaurants;
 
@@ -35,10 +42,24 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
     @Override
     public void onBindViewHolder(viewHolder holder, int position) {
-        Restaurant r = restaurants.get(position);
+        final Restaurant r = restaurants.get(position);
         holder.setName(r.getName());
         holder.setRestaurantImage(r.getImage());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new RestaurantFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("name",r.getName());
+                fragment.setArguments(bundle);
+                FragmentManager manager = ((Activity) v.getContext()).getFragmentManager();
+                manager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                Toast.makeText(v.getContext(), "", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -49,11 +70,14 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
         ImageView restaurantImage;
         TextView name;
+        ImageView row;
 
         public viewHolder(View itemView) {
             super(itemView);
             restaurantImage = (ImageView) itemView.findViewById(R.id.restaurantImage);
             name = (TextView) itemView.findViewById(R.id.name);
+            row = (ImageView) itemView.findViewById(R.id.row);
+            row.setImageResource(R.drawable.ic_keyboard_arrow_right);
         }
 
         public ImageView getRestaurantImage() {
@@ -71,6 +95,14 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
         public void setName(String name) {
             this.name.setText(name);
+        }
+
+        public ImageView getRow() {
+            return row;
+        }
+
+        public void setRow(ImageView row) {
+            this.row = row;
         }
     }
 }
