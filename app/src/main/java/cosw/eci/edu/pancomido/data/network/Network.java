@@ -2,7 +2,9 @@ package cosw.eci.edu.pancomido.data.network;
 
 import java.util.List;
 
+import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
+import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.Todo;
 import cosw.eci.edu.pancomido.data.model.Token;
 import cosw.eci.edu.pancomido.data.model.User;
@@ -18,4 +20,8 @@ public interface Network
     void createTodo(Todo todo, RequestCallback requestCallback);
 
     void getTodoList(RequestCallback<List<Todo>> requestCallback);
+
+    void getRestaurantInformation(String name,  RequestCallback<Restaurant> requestCallback);
+
+    void getRestaurantDishes(Integer idRestaurant, RequestCallback<List<Dish>> requestCallback);
 }

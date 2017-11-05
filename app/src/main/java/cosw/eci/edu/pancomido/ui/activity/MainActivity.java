@@ -19,19 +19,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.SessionManager;
+import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantListFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static RestaurantListFragment restaurantListFragment = new RestaurantListFragment();
-    final SessionManager session = new SessionManager(this);
+    public static RestaurantFragment restaurantFragment = new RestaurantFragment();
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        session = new SessionManager(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.fragment_container, restaurantListFragment).addToBackStack(null).commit();
+        manager.beginTransaction().replace(R.id.fragment_container, restaurantFragment).addToBackStack(null).commit();
 
     }
 
@@ -99,15 +103,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
             finish();
         }
-        /*
-        else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
