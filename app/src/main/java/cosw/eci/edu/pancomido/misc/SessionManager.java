@@ -37,6 +37,8 @@ public class SessionManager {
     public static final String Q = "quan";
     public static final String PRICE = "price";
 
+    private static final String EMAIL = "email";
+
     public SessionManager(Context context){
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
@@ -49,6 +51,12 @@ public class SessionManager {
         return token;
     }
 
+    public String setEmail(String email){
+        editor.putString(EMAIL, email);
+        editor.commit();
+        return email;
+    }
+
     public Boolean isLoggedIn(){
         String token = pref.getString(TOKEN, "");
         return !token.isEmpty();
@@ -56,6 +64,10 @@ public class SessionManager {
 
     public String getToken(){
         return pref.getString(TOKEN, "");
+    }
+
+    public String getEmail(){
+        return pref.getString(EMAIL, "");
     }
 
     public void logoutUser(){
