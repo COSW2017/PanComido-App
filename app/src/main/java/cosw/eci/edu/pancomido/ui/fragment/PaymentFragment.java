@@ -143,14 +143,16 @@ public class PaymentFragment extends Fragment{
     }
 
     private void configureAdapter(List<User> response) {
-        ArrayList<String> arrayList = new ArrayList<>();
-        for (User u : response){
-            arrayList.add(u.getFirstname()+" "+u.getLastname());
-        }
+        if (response != null) {
+            ArrayList<String> arrayList = new ArrayList<>();
+            for (User u : response) {
+                arrayList.add(u.getFirstname() + " " + u.getLastname());
+            }
 
-        arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
-        friends.setAdapter(arrayAdapter);
-        //friends.setTextFilterEnabled(true);
+            arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
+            friends.setAdapter(arrayAdapter);
+            //friends.setTextFilterEnabled(true);
+        }
 
     }
 

@@ -4,11 +4,14 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,9 +21,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
+import cosw.eci.edu.pancomido.data.model.User;
+import cosw.eci.edu.pancomido.data.network.RequestCallback;
+import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
+import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.ui.fragment.PaymentFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
@@ -32,6 +41,9 @@ public class MainActivity extends AppCompatActivity
     public static RestaurantListFragment restaurantListFragment = new RestaurantListFragment();
     public static RestaurantFragment restaurantFragment = new RestaurantFragment();
     private SessionManager session;
+    private TextView userEmail;
+    private TextView userName;
+    private ImageView userImage;
 
     String[] permissions = { android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.ACCESS_COARSE_LOCATION };
@@ -46,7 +58,7 @@ public class MainActivity extends AppCompatActivity
         session = new SessionManager(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        session = new SessionManager(this);
+        //session = new SessionManager(this);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -54,10 +66,35 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         ActivityCompat.requestPermissions(this,  permissions, ACCESS_LOCATION_PERMISSION_CODE);
+        //cambiar el correo y el nombre del usuario
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
+        userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username);
+        userImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.userImage);
+        RetrofitNetwork retrofitNetwork = new RetrofitNetwork();
+        RequestCallback<User> requestCallback = new RequestCallback<User>() {
+            @Override
+            public void onSuccess(final User response) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        userName.setText(response.getFirstname()+" "+response.getLastname());
+                        userEmail.setText(response.getEmail());
+                        byte[] decodedString = Base64.decode(response.getImage(), Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        userImage.setImageBitmap(decodedByte);
+                    }
+                });
+            }
 
+            @Override
+            public void onFailed(NetworkException e) {
+
+            }
+        };
+        retrofitNetwork.getUserByEmail(session.getEmail(),requestCallback);
     }
 
     @Override

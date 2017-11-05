@@ -30,4 +30,6 @@ public interface Network
     void getRestaurants(Float latitude, Float longitude, RequestCallback<List<Restaurant>> requestCallback);
 
     void getFriends(String userMail, RequestCallback<List<User>> requestCallback);
+
+    void getUserByEmail(String user, RequestCallback<User> requestCallback);
 }
