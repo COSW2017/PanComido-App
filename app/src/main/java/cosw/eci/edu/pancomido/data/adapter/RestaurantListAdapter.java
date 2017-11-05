@@ -53,8 +53,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
                 bundle.putString("name",r.getName());
                 fragment.setArguments(bundle);
                 FragmentManager manager = ((Activity) v.getContext()).getFragmentManager();
-                manager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
-                Toast.makeText(v.getContext(), "", Toast.LENGTH_SHORT).show();
+                manager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack("lista").commit();
             }
         });
     }

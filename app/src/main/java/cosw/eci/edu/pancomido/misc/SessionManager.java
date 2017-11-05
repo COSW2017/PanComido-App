@@ -3,6 +3,9 @@ package cosw.eci.edu.pancomido.misc;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Alejandra on 31/10/2017.
  */
@@ -20,6 +23,8 @@ public class SessionManager {
     private static final String PREF_NAME = "AndroidHivePref";
 
     private static final String TOKEN = "token";
+    public static final String LATITUDE = "lat";
+    public static final String LONGITUDE = "long";
 
     public SessionManager(Context context){
         this._context = context;
@@ -45,5 +50,22 @@ public class SessionManager {
     public void logoutUser(){
         editor.clear();
         editor.commit();
+    }
+
+    public void setLocation(String longitude, String latitude){
+        editor.putString(LONGITUDE, longitude);
+        editor.putString(LATITUDE, latitude);
+        editor.commit();
+    }
+
+    public Map<String, String> getLocation(){
+        Map<String, String> location = new HashMap<>();
+        location.put(LONGITUDE, pref.getString(LONGITUDE, ""));
+        location.put(LATITUDE, pref.getString(LATITUDE, ""));
+        return location;
+    }
+
+    public Boolean location(){
+        return !pref.getString(LONGITUDE, "").isEmpty();
     }
 }
