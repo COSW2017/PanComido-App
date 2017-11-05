@@ -37,9 +37,11 @@ import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
 
     private final List<Dish> dishes;
+    private MainActivity view;
 
-    public DishAdapter(List<Dish> dishes){
+    public DishAdapter(List<Dish> dishes, MainActivity view){
         this.dishes = dishes;
+        this.view = view;
     }
 
 
@@ -93,7 +95,7 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
                 holder.manager.setDishes(gson.toJson(map));
             }
         }
-        RestaurantFragment.showMessage();
+        view.showMessage();
     }
 
     private void addProduct(int position, DishAdapter.viewHolder holder) {
@@ -124,7 +126,7 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
             Log.d("JSON", json1);
             holder.manager.setDishes(json1);
         }
-        RestaurantFragment.showMessage();
+        view.showMessage();
     }
 
     @Override

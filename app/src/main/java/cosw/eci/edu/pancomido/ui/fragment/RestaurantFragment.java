@@ -1,6 +1,8 @@
 package cosw.eci.edu.pancomido.ui.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -31,6 +33,7 @@ import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.misc.loadImage;
 import cosw.eci.edu.pancomido.ui.activity.LoginActivity;
+import cosw.eci.edu.pancomido.ui.activity.MainActivity;
 
 
 /**
@@ -114,22 +117,9 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    public static void showMessage(){
-        Snackbar snackbar = Snackbar
-                .make(view, "See order ("+sessionManager.getQ()+") Total: "+sessionManager.getPrice(), Snackbar.LENGTH_LONG)
-                .setAction("Go", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToOrderDetail();
-                Log.d("TODOOOOOOOOO", "TOPDOOOOOOOOO");
-            }
-        });
 
-        snackbar.show();
-    }
 
-    private static void goToOrderDetail() {
-    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -218,7 +208,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         listView.setLayoutManager( layoutManager );
         try {
-            DishAdapter dishAdapter = new DishAdapter(dishes);
+            DishAdapter dishAdapter = new DishAdapter(dishes, (MainActivity) getActivity());
             listView.setAdapter(dishAdapter);
 
         }catch(Exception e){

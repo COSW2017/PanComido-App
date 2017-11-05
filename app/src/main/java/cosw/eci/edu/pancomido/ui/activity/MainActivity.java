@@ -1,5 +1,6 @@
 package cosw.eci.edu.pancomido.ui.activity;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.SessionManager;
+import cosw.eci.edu.pancomido.ui.fragment.OrderDetailFragment;
 import cosw.eci.edu.pancomido.ui.fragment.PaymentFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantListFragment;
@@ -133,5 +135,24 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void goToOrderDetail() {
+        OrderDetailFragment paymentFragment = new OrderDetailFragment();
+        FragmentManager manager = getFragmentManager();
+        manager.beginTransaction().replace(R.id.fragment_container, paymentFragment).addToBackStack("detail").commit();
+    }
+
+    public void showMessage(){
+        Snackbar snackbar = Snackbar
+                .make(this.findViewById(android.R.id.content).getRootView(), "See order ("+session.getQ()+") Total: "+session.getPrice(), Snackbar.LENGTH_LONG)
+                .setAction("Go", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        goToOrderDetail();
+                    }
+                });
+
+        snackbar.show();
     }
 }
