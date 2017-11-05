@@ -16,7 +16,6 @@ public class Restaurant {
     private Integer love;
     private Integer angry;
     private String image;
-
     private User user_id;
 
     public Restaurant(Integer id_restaurant, String name, Float latitude, Float longitude, Integer like, Integer dislike, Integer love, Integer angry) {
