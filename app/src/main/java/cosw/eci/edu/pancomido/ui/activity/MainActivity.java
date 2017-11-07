@@ -85,9 +85,11 @@ public class MainActivity extends AppCompatActivity
                         session.setUserId(""+response.getUser_id());
                         userName.setText(response.getFirstname()+" "+response.getLastname());
                         userEmail.setText(response.getEmail());
-                        byte[] decodedString = Base64.decode(response.getImage(), Base64.DEFAULT);
-                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                        userImage.setImageBitmap(decodedByte);
+                        if (response.getImage() != null) {
+                            byte[] decodedString = Base64.decode(response.getImage(), Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            userImage.setImageBitmap(decodedByte);
+                        }
                     }
                 });
             }
