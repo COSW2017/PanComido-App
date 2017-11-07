@@ -33,6 +33,7 @@ public class RetrofitNetwork
 {
 
     private static final String BASE_URL = "http://pancomido-cosw.herokuapp.com";
+    //private static final String BASE_URL = "http://10.2.67.235:8080";
 
     private NetworkService networkService;
 
@@ -203,7 +204,7 @@ public class RetrofitNetwork
             @Override
             public void run()
             {
-                Call call = networkService.getRestaurants(latitude, longitude);
+                Call call = networkService.getRestaurants(latitude+","+longitude);
                 try
                 {
                     Response<List<Restaurant>> execute = call.execute();
@@ -265,8 +266,7 @@ public class RetrofitNetwork
         backgroundExecutor.execute( new Runnable()
         {
             @Override
-            public void run()
-            {
+            public void run() {
                 Call call = networkService.addCommand(command);
                 try
                 {
@@ -307,8 +307,7 @@ public class RetrofitNetwork
         backgroundExecutor.execute( new Runnable()
         {
             @Override
-            public void run()
-            {
+            public void run() {
                 Call call = networkService.addCommandDish(idDish, idCommand);
                 try
                 {

@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
             User login = new User();
             login.setEmail(email);
             login.setUser_password(password);
-            RetrofitNetwork r = new RetrofitNetwork();
+            final RetrofitNetwork r = new RetrofitNetwork();
 
             RequestCallback<Token> req = new RequestCallback<Token>() {
                 @Override
@@ -155,6 +155,17 @@ public class LoginActivity extends AppCompatActivity {
                         String token = response.getAccessToken();
                         session.setToken(token);
                         session.setEmail(email);
+                        r.getUserByEmail(email, new RequestCallback<User>() {
+                            @Override
+                            public void onSuccess(User response) {
+                                session.setUserId(response.getUser_id()+"");
+                            }
+
+                            @Override
+                            public void onFailed(NetworkException e) {
+
+                            }
+                        });
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(i);
                         finish();
