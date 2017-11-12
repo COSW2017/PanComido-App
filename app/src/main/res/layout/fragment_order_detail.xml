@@ -28,19 +28,21 @@
         android:paddingTop="10dp"
         android:textStyle="bold"/>
 
-    <ListView
+    <ExpandableListView
         android:id="@+id/list_commands"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="350dp"
         android:layout_below="@id/resume_total"
-        android:paddingBottom="50dp">
-    </ListView>
+        android:paddingBottom="50dp"
+        android:paddingTop="20dp">
+
+    </ExpandableListView>
 
     <Button
         android:id="@+id/goToPay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/list_commands"
         android:text="@string/continue_pay"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
