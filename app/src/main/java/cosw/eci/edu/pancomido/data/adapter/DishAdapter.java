@@ -64,12 +64,12 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
                 addProduct(position, holder);
             }
         });
-        holder.delQuantity.setOnClickListener(new View.OnClickListener() {
+        /*holder.delQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 delProduct(position, holder);
             }
-        });
+        });*/
     }
 
     private void delProduct(int position, DishAdapter.viewHolder holder) {
@@ -142,7 +142,7 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
         TextView quantity;
         TextView quanty;
         TextView total;
-        Button addQuantity, delQuantity;
+        Button addQuantity;
         SessionManager manager;
 
 
@@ -151,9 +151,7 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.viewHolder> {
             image = (ImageView) itemView.findViewById(R.id.dish_image);
             name = (TextView) itemView.findViewById(R.id.dish_name);
             price = (TextView) itemView.findViewById(R.id.dish_price);
-            quantity = (TextView) itemView.findViewById(R.id.dish_quantity);
             addQuantity = (Button) itemView.findViewById(R.id.add_product);
-            delQuantity = (Button) itemView.findViewById(R.id.del_product);
             manager = new SessionManager(itemView.getContext());
         }
 
