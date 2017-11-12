@@ -30,8 +30,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<Restaurant> restaurants;
     private HashMap<Integer, List<Dish>> dishesLists;
     private HashMap<Integer, List<Integer>> dishesQuanty;
-    TextView quanty;
-    TextView price;
+
 
     public ExpandableListAdapter(Context context, List<Restaurant> restaurants, HashMap<Integer, List<Dish>> dishesLists,
                                  HashMap<Integer, List<Integer>>  dishesQuanty){
@@ -103,39 +102,42 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         SessionManager sessionManager = new SessionManager(context);
 
         TextView name = (TextView) convertView.findViewById(R.id.dish_name_row);
-        price= (TextView) convertView.findViewById(R.id.dish_price_row);
-        quanty = (TextView) convertView.findViewById(R.id.dish_quanty_row);
+        TextView quanty = (TextView) convertView.findViewById(R.id.dish_quanty_row);
+        TextView price= (TextView) convertView.findViewById(R.id.dish_price_row);
         int idRestaurant= restaurants.get(groupPosition).getId_restaurant();
         name.setText(dishesLists.get(idRestaurant).get(childPosition).getName());
         int price1 = (dishesLists.get(idRestaurant).get(childPosition).
                 getPrice()*dishesQuanty.get(idRestaurant).get(childPosition));
-        price.setText("$ s"+price1);
+        price.setText("$ "+price1);
         quanty.setText(dishesQuanty.get(idRestaurant).get(childPosition)+"");
 
-        setActionsButtons(convertView, sessionManager, restaurants.get(groupPosition).getId_restaurant(), childPosition);
+        setActionsButtons(convertView, sessionManager, restaurants.get(groupPosition).getId_restaurant(),
+                childPosition, quanty, price);
         return convertView;
     }
 
-    private void setActionsButtons(View convertView, final SessionManager sessionManager, final int groupPosition, final int childPosition) {
-        Button addButton = (Button) convertView.findViewById(R.id.dish_del_row);
-        Button delButton = (Button) convertView.findViewById(R.id.dish_add_row);
+    private void setActionsButtons(View convertView, final SessionManager sessionManager,
+                                   final int groupPosition,
+                                   final int childPosition, final TextView quanty, final TextView price) {
+        Button addButton = (Button) convertView.findViewById(R.id.dish_add_row);
+        Button delButton = (Button) convertView.findViewById(R.id.dish_del_row);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addProduct(groupPosition, childPosition, sessionManager);
+                addProduct(groupPosition, childPosition, sessionManager, quanty, price);
             }
         });
 
         delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delProduct(groupPosition, childPosition, sessionManager);
+                delProduct(groupPosition, childPosition, sessionManager, quanty, price);
             }
         });
 
     }
 
-    private void addProduct(int position, int childPosition, SessionManager sessionManager) {
+    private void addProduct(int position, int childPosition, SessionManager sessionManager, TextView quanty, TextView price) {
         String json = sessionManager.getDishes();
         sessionManager.setQ(sessionManager.getQ()+1);
         Dish dish = dishesLists.get(position).get(childPosition);
@@ -169,7 +171,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
 
-    private void delProduct(int position, int childPosition, SessionManager sessionManager) {
+    private void delProduct(int position, int childPosition, SessionManager sessionManager,  TextView quanty, TextView price) {
         String json = sessionManager.getDishes();
         Dish dish = dishesLists.get(position).get(childPosition);
         if(!json.isEmpty()){
@@ -180,10 +182,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 sessionManager.setQ(sessionManager.getQ()<1 ? 0 : sessionManager.getQ()-1);
                 sessionManager.setPrice(sessionManager.getPrice()<1 ? 0 : sessionManager.getPrice()-
                         dish.getPrice());
-                int quanty = Integer.parseInt(map.get(dish.getId_dish()+
+                int quanty1 = Integer.parseInt(map.get(dish.getId_dish()+
                         ","+dish.getRestaurant().getId_restaurant()));
-                if(quanty > 1){
-                    quanty-=1;
+                if(quanty1 > 1){
+                    quanty1-=1;
                     map.put(dish.getId_dish()
                             +","+dish.getRestaurant().getId_restaurant()+"", quanty+"");
                 }else {

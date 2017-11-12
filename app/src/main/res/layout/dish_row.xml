@@ -68,7 +68,8 @@ android:layout_height="wrap_content">
             android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:text="+"
-            android:background="@color/colorPrimary"
+            android:textSize="30sp"
+            android:background="@drawable/mybutton"
             android:textColor="@android:color/white"
             android:layout_alignParentRight="true"/>
 
