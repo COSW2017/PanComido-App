@@ -196,16 +196,11 @@ public class PaymentFragment extends Fragment{
         SessionManager sessionManager = new SessionManager(getActivity());
         map = gson.fromJson(sessionManager.getDishes(), HashMap.class);
         System.out.println(map);
-
         dishes = new ArrayList<>();
         dishes_info = new ArrayList<>();
-
         int size = map.size();
-
         cant2 = 0;
-
         total_dishes = 0;
-
         for(Map.Entry<String, String> entry : map.entrySet()){
             String[] key = entry.getKey().split(",");
             final Integer cant = Integer.parseInt(entry.getValue());
@@ -224,8 +219,6 @@ public class PaymentFragment extends Fragment{
                     e.printStackTrace();
                 }
             });
-
-
 
         }
 
@@ -384,7 +377,6 @@ public class PaymentFragment extends Fragment{
     }
 
     private void dishResponse(Dish response, int cant) {
-
         for (int i = 0 ; i < cant ; i++){
             dishes.add(response.getName());
             dishes_info.add(response);

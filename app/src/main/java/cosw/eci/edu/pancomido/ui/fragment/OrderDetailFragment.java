@@ -9,8 +9,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.adapter.ExpandableListAdapter;
+import cosw.eci.edu.pancomido.data.model.Dish;
+import cosw.eci.edu.pancomido.data.model.Restaurant;
+import cosw.eci.edu.pancomido.data.network.RequestCallback;
+import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
+import cosw.eci.edu.pancomido.exception.NetworkException;
+import cosw.eci.edu.pancomido.misc.SessionManager;
 
 
 /**
@@ -28,6 +44,15 @@ public class OrderDetailFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private View view;
     private Button goPay;
+    private ExpandableListView expandableListView;
+    private HashMap<String, String> map;
+    private List<Restaurant> restaurants;
+    private HashMap<Integer, List<Dish>> dishesLists;
+    private HashMap<Integer, List<Integer>> dishesQuanty;
+    private Integer q =0;
+    private TextView totalOrder;
+    SessionManager sessionManager;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -71,6 +96,7 @@ public class OrderDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_order_detail, container, false);
+        sessionManager = new SessionManager(getActivity());
         goPay = (Button) view.findViewById(R.id.goToPay);
         goPay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +104,57 @@ public class OrderDetailFragment extends Fragment {
                 goToPay();
             }
         });
+        expandableListView = (ExpandableListView) view.findViewById(R.id.list_commands);
+        totalOrder = (TextView) view.findViewById(R.id.resume_total);
+        totalOrder.setText("Total: $"+sessionManager.getPrice()+"");
+        restaurants = new ArrayList<>();
+        dishesLists = new HashMap<>();
+        dishesQuanty = new HashMap<>();
+        getDishes();
         return view;
+    }
+
+    private void getDishes() {
+        Gson gson = new Gson();
+        map = gson.fromJson(sessionManager.getDishes(), HashMap.class);
+        q = map.size();
+        for(Map.Entry<String, String> entry : map.entrySet()){
+            String[] key = entry.getKey().split(",");
+            final Integer cant = Integer.parseInt(entry.getValue());
+            Integer id_rest = Integer.parseInt(key[1]);
+            Integer id_dish = Integer.parseInt(key[0]);
+            final RetrofitNetwork r = new RetrofitNetwork();
+            r.getDishById(id_rest, id_dish, new RequestCallback<Dish>() {
+                @Override
+                public void onSuccess(final Dish response) {
+                    Boolean hasKey =dishesLists.containsKey(response.getRestaurant().getId_restaurant());
+                    if(!hasKey){
+                        restaurants.add(response.getRestaurant());
+                        dishesLists.put(response.getRestaurant().getId_restaurant(), new ArrayList<Dish>());
+                        dishesQuanty.put(response.getRestaurant().getId_restaurant(), new ArrayList<Integer>());
+                    }
+                    dishesLists.get(response.getRestaurant().getId_restaurant()).add(response);
+                    dishesQuanty.get(response.getRestaurant().getId_restaurant()).add(cant);
+                    synchronized (q){
+                        q-=1;
+                        if(q==0){
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ExpandableListAdapter listAdapter = new ExpandableListAdapter(getActivity(), restaurants, dishesLists, dishesQuanty);
+                                    expandableListView.setAdapter(listAdapter);
+                                }
+                            });
+
+                        }
+                    }
+                }
+                @Override
+                public void onFailed(NetworkException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     private void goToPay() {
