@@ -50,8 +50,8 @@ public class OrderDetailFragment extends Fragment {
     private HashMap<Integer, List<Dish>> dishesLists;
     private HashMap<Integer, List<Integer>> dishesQuanty;
     private Integer q =0;
-    private TextView totalOrder;
-    SessionManager sessionManager;
+    private static TextView totalOrder;
+    private static SessionManager sessionManager;
 
 
     // TODO: Rename and change types of parameters
@@ -197,5 +197,9 @@ public class OrderDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public static void refreshPrice(){
+        totalOrder.setText("Total: $"+sessionManager.getPrice()+"");
     }
 }
