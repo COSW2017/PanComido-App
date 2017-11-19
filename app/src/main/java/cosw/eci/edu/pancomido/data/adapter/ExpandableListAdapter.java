@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -19,6 +20,7 @@ import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.SessionManager;
+import cosw.eci.edu.pancomido.ui.fragment.OrderDetailFragment;
 
 /**
  * Created by Alejandra on 11/11/2017.
@@ -125,6 +127,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 addProduct(groupPosition, childPosition, sessionManager, quanty, price);
+                addProduct(groupPosition, childPosition);
             }
         });
 
@@ -132,9 +135,32 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 delProduct(groupPosition, childPosition, sessionManager, quanty, price);
+                deleteProduct(groupPosition, childPosition);
             }
         });
 
+    }
+
+    private void addProduct(int position, int childPosition) {
+        int quanty1 = dishesQuanty.get(position).get(childPosition);
+        quanty1++;
+        dishesQuanty.get(position).set(childPosition, quanty1);
+        this.notifyDataSetChanged();
+    }
+
+    private void deleteProduct(int position, int childPosition){
+        int quanty1 = dishesQuanty.get(position).get(childPosition);
+        quanty1--;
+        if(quanty1>0){
+            dishesQuanty.get(position).set(childPosition, quanty1);
+        }else{
+            dishesQuanty.get(position).remove(childPosition);
+            dishesLists.get(position).remove(childPosition);
+            if(dishesLists.size()<1){
+                restaurants.remove(position);
+            }
+        }
+        this.notifyDataSetChanged();
     }
 
     private void addProduct(int position, int childPosition, SessionManager sessionManager, TextView quanty, TextView price) {
@@ -166,8 +192,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             Log.d("JSON", json1);
             sessionManager.setDishes(json1);
         }
-        quanty.setText((Integer.parseInt(quanty.getText().toString())+1)+"");
-        price.setText((Integer.parseInt(quanty.getText().toString())*dish.getPrice())+"");
+        OrderDetailFragment.refreshPrice();
     }
 
 
@@ -187,7 +212,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 if(quanty1 > 1){
                     quanty1-=1;
                     map.put(dish.getId_dish()
-                            +","+dish.getRestaurant().getId_restaurant()+"", quanty+"");
+                            +","+dish.getRestaurant().getId_restaurant()+"", quanty1+"");
                 }else {
                     map.remove(dish.getId_dish()+","+
                             dish.getRestaurant().getId_restaurant());
@@ -195,8 +220,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 sessionManager.setDishes(gson.toJson(map));
             }
         }
-        quanty.setText((Integer.parseInt(quanty.getText().toString())-1)+"");
-        price.setText((Integer.parseInt(quanty.getText().toString())*dish.getPrice())+"");
+        OrderDetailFragment.refreshPrice();
     }
 
 
