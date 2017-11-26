@@ -2,8 +2,6 @@ package cosw.eci.edu.pancomido.ui.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,10 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -30,6 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.model.User;
+import cosw.eci.edu.pancomido.data.network.RequestCallback;
+import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
+import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
 
 public class UserActivity extends AppCompatActivity {
@@ -45,7 +47,7 @@ public class UserActivity extends AppCompatActivity {
 
     EditText phoneText;
     EditText passwordText;
-    Button newImageButton;
+    ImageView userImage;
     Spinner citySpinner;
 
     @Override
@@ -55,12 +57,12 @@ public class UserActivity extends AppCompatActivity {
 
         phoneText = (EditText) findViewById(R.id.et_new_phone);
         passwordText = (EditText) findViewById(R.id.et_new_password);
-        newImageButton = (Button) findViewById(R.id.btn_change_image);
         citySpinner = (Spinner) findViewById(R.id.sp_new_city);
 
         SessionManager session = new SessionManager(this);
         passwordText.setText(session.getPassword());
         phoneText.setText(session.getPhone());
+        //decode image string and populate view
 
         List<String> spinnerArray = new ArrayList<>();
         spinnerArray.add("Bogotá");
@@ -97,18 +99,14 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        ImageView view = (ImageView) findViewById(R.id.imageView);
+        userImage = (ImageView) findViewById(R.id.imageView);
 
-        if (resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK && data != null){
             switch (requestCode){
                 case TAKE_PHOTO_OPTION:
                     Bitmap picture = null;
-                    try {
-                         picture = (Bitmap) data.getExtras().get("data");
-                    }catch (NullPointerException e){
-                        Log.e(TAG, "Error onActivityResult: ", e.getCause());
-                    }
-                    view.setImageBitmap(picture);
+                    picture = (Bitmap) data.getExtras().get("data");
+                    userImage.setImageBitmap(picture);
                     break;
                 case CHOOSE_GALLERY_OPTION:
                     Uri imageUri = data.getData();
@@ -116,13 +114,14 @@ public class UserActivity extends AppCompatActivity {
                     if (imageUri != null) {
                         try {
                             imageStream = getContentResolver().openInputStream(imageUri);
+                            Log.d(TAG, "getting image stream");
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
-                            Toast.makeText(UserActivity.this, "Something went worng choosing the image", Toast.LENGTH_LONG).show();
+                            Toast.makeText(UserActivity.this, "Something went wrong choosing the image", Toast.LENGTH_LONG).show();
                         }
                     }
                     Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                    view.setImageBitmap(selectedImage);
+                    userImage.setImageBitmap(selectedImage);
                     break;
             }
         }
@@ -131,7 +130,6 @@ public class UserActivity extends AppCompatActivity {
     public void save(View view){
         EditText newPhone = (EditText) findViewById(R.id.et_new_phone);
         EditText newPass = (EditText) findViewById(R.id.et_new_password);
-        ImageView photo = (ImageView) findViewById(R.id.imageView);
         TextWatcher textWatcherPh = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -166,13 +164,36 @@ public class UserActivity extends AppCompatActivity {
             }
         };
         newPass.addTextChangedListener(textWatcherPw);
+        String image = encodeImage();
+        String phone = newPhone.getText().toString();
+        String password = newPass.getText().toString();
 
-        Bitmap image = ((BitmapDrawable) photo.getDrawable()).getBitmap();
+        RetrofitNetwork network = new RetrofitNetwork();
+        //User user = currentUser
+        // user.setPhone(phone)
+        // user.setPassword(password)
+        // user.setImage(image)
+        RequestCallback<User> request = new RequestCallback<User>() {
+            @Override
+            public void onSuccess(User response) {
+                Log.d(TAG, "user: "+response.getEmail());
+                Toast.makeText(UserActivity.this, "Profile updated successfully", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailed(NetworkException e) {
+                e.printStackTrace();
+            }
+        };
+        //network.updateUser(user, request);
+    }
+
+    private String encodeImage(){
+        Bitmap image = ((BitmapDrawable) userImage.getDrawable()).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] bytes = stream.toByteArray();
-
-        //send image and data to server w/ retrofit
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 }
 

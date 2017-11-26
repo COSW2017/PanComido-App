@@ -15,6 +15,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
@@ -35,6 +36,9 @@ interface NetworkService
 
     @POST( "user/register" )
     Call<User> createUser(@Body User user);
+
+    @PUT( "user/update" )
+    Call<User> updateUser(@Body User user);
 
     @POST("user/search")
     Call<User> getUserByEmail(@Body String email);

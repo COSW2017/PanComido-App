@@ -41,7 +41,6 @@ public class SessionManager {
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
     private static final String PHONE = "phone";
-    private static final String CITY = "city";
 
     public SessionManager(Context context){
         this._context = context;

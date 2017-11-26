@@ -135,6 +135,22 @@ public class RetrofitNetwork
         } );
     }
 
+    @Override
+    public void updateUser(final User user, final RequestCallback<User> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call call = networkService.updateUser( user);
+                try {
+                    Response<User> execute = call.execute();
+                    requestCallback.onSuccess( execute.body());
+                }catch (IOException e){
+                    requestCallback.onFailed( new NetworkException(null, e));
+                }
+            }
+        });
+    }
+
     public void getRestaurantInformation(final String name, final RequestCallback<Restaurant> requestCallback) {
         backgroundExecutor.execute( new Runnable()
         {
