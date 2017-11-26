@@ -19,26 +19,29 @@ import cosw.eci.edu.pancomido.data.model.Command_Dish;
 public class SessionManager {
 
     private static final String USER_ID = "user_id";
-    SharedPreferences pref;
+    private SharedPreferences pref;
 
-    SharedPreferences.Editor editor;
+    private SharedPreferences.Editor editor;
 
-    Context _context;
+    private Context _context;
 
-    int PRIVATE_MODE = 0;
+    private int PRIVATE_MODE = 0;
 
     private static final String PREF_NAME = "AndroidHivePref";
 
     private static final String TOKEN = "token";
     public static final String LATITUDE = "lat";
     public static final String LONGITUDE = "long";
-    public static final String ORDER = "order";
-    public static final String COMMANDS = "command";
-    public static final String DISHES = "dishes";
-    public static final String Q = "quan";
-    public static final String PRICE = "price";
+    private static final String ORDER = "order";
+    private static final String COMMANDS = "command";
+    private static final String DISHES = "dishes";
+    private static final String Q = "quan";
+    private static final String PRICE = "price";
 
     private static final String EMAIL = "email";
+    private static final String PASSWORD = "password";
+    private static final String PHONE = "phone";
+    private static final String CITY = "city";
 
     public SessionManager(Context context){
         this._context = context;
@@ -150,6 +153,24 @@ public class SessionManager {
         return pref.getInt(PRICE, 0);
     }
 
+    public String getPassword(){
+        return pref.getString(PASSWORD, "");
+    }
 
+    public String setPassword(String password){
+        editor.putString(PASSWORD, password);
+        editor.commit();
+        return password;
+    }
+
+    public String getPhone(){
+        return pref.getString(PHONE, "");
+    }
+
+    public String setPhone(String phone){
+        editor.putString(PHONE, phone);
+        editor.commit();
+        return phone;
+    }
 
 }

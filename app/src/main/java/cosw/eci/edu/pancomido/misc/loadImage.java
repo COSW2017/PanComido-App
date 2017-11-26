@@ -30,8 +30,7 @@ public class loadImage extends AsyncTask<String, Void, Bitmap> {
             imageUrl = new URL(url[0]);
             conn = (HttpURLConnection) imageUrl.openConnection();
             conn.connect();
-            Bitmap imagen = BitmapFactory.decodeStream(conn.getInputStream());
-            return imagen;
+            return BitmapFactory.decodeStream(conn.getInputStream());
         } catch (IOException e) {
 
             e.printStackTrace();
