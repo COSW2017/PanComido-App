@@ -31,7 +31,7 @@
     <string name="comments">Comments</string>
     <string name="name_of_the_dish">Name of the dish</string>
     <string name="update">Update</string>
-    <string name="Loading">Loading...</string>
+    <string name="Loading">Loading…</string>
     <string name="payment_mode">Forma de pago</string>
     <string name="i_pay">Yo invito</string>
     <string name="friends_pay">Dividir el pago con mis amigos</string>
@@ -54,4 +54,6 @@
     <string name="new_image">Add new image</string>
     <string name="city">City</string>
     <string name="account">Account</string>
+    <string name="save">Save changes</string>
+    <string name="account_details">Account details</string>
 </resources>
