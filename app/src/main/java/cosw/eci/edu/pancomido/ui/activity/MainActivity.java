@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 
 import android.support.v4.app.ActivityCompat;
@@ -165,6 +164,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_slideshow) {
 
+        } else if (id == R.id.nav_view) {
+            Intent user = new Intent(MainActivity.this, UserActivity.class);
+            startActivity(user);
         } else if (id == R.id.nav_logout) {
             session.logoutUser();
             Intent i = new Intent(MainActivity.this, LoginActivity.class);

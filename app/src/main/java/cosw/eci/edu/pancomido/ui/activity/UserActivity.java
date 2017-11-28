@@ -47,6 +47,7 @@ public class UserActivity extends AppCompatActivity {
 
     EditText phoneText;
     EditText passwordText;
+    SessionManager session;
     ImageView userImage;
     Spinner citySpinner;
 
@@ -59,10 +60,9 @@ public class UserActivity extends AppCompatActivity {
         passwordText = (EditText) findViewById(R.id.et_new_password);
         citySpinner = (Spinner) findViewById(R.id.sp_new_city);
 
-        SessionManager session = new SessionManager(this);
-        passwordText.setText(session.getPassword());
-        phoneText.setText(session.getPhone());
-        //decode image string and populate view
+        session = new SessionManager(this);
+        //passwordText.setText(session.getPassword());
+        //phoneText.setText(session.getPhone());
 
         List<String> spinnerArray = new ArrayList<>();
         spinnerArray.add("Bogotá");
@@ -130,6 +130,7 @@ public class UserActivity extends AppCompatActivity {
     public void save(View view){
         EditText newPhone = (EditText) findViewById(R.id.et_new_phone);
         EditText newPass = (EditText) findViewById(R.id.et_new_password);
+        session = new SessionManager(this);
         TextWatcher textWatcherPh = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -167,17 +168,21 @@ public class UserActivity extends AppCompatActivity {
         String image = encodeImage();
         String phone = newPhone.getText().toString();
         String password = newPass.getText().toString();
+        final User user = null;
 
         RetrofitNetwork network = new RetrofitNetwork();
-        //User user = currentUser
-        // user.setPhone(phone)
-        // user.setPassword(password)
-        // user.setImage(image)
         RequestCallback<User> request = new RequestCallback<User>() {
             @Override
-            public void onSuccess(User response) {
-                Log.d(TAG, "user: "+response.getEmail());
-                Toast.makeText(UserActivity.this, "Profile updated successfully", Toast.LENGTH_LONG).show();
+            public void onSuccess(final User response) {
+                UserActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        user.setUser_id(response.getUser_id());
+                        user.setEmail(response.getEmail());
+                        user.setFirstname(response.getFirstname());
+                        user.setLastname(response.getLastname());
+                    }
+                });
             }
 
             @Override
@@ -185,7 +190,11 @@ public class UserActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         };
-        //network.updateUser(user, request);
+        user.setCellphone(phone);
+        user.setUser_password(password);
+        user.setImage(image);
+        network.updateUser(user, request);
+        Toast.makeText(UserActivity.this, "Profile updated successfully", Toast.LENGTH_LONG).show();
     }
 
     private String encodeImage(){
