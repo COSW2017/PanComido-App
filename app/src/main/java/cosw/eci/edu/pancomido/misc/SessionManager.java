@@ -115,6 +115,7 @@ public class SessionManager {
         editor.remove(DISHES);
         editor.remove(Q);
         editor.remove(PRICE);
+        editor.commit();
     }
     public Boolean orderCreated(){
         return !pref.getString(ORDER, "").isEmpty();
