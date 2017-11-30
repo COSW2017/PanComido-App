@@ -109,6 +109,13 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void clearOrder(){
+        editor.remove(ORDER);
+        editor.remove(COMMANDS);
+        editor.remove(DISHES);
+        editor.remove(Q);
+        editor.remove(PRICE);
+    }
     public Boolean orderCreated(){
         return !pref.getString(ORDER, "").isEmpty();
     }

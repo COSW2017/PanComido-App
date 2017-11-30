@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity
 
     public void showMessage(){
         Snackbar snackbar = Snackbar
-                .make(this.findViewById(android.R.id.content).getRootView(), "See order ("+session.getQ()+") Total: "+session.getPrice(), Snackbar.LENGTH_LONG)
+                .make(this.findViewById(android.R.id.content).getRootView(), "See order ("+(session.getQ()+1)+") Total: "+session.getPrice(), Snackbar.LENGTH_LONG)
                 .setAction("Go", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
