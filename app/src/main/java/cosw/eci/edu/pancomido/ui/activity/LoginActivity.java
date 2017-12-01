@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +16,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Token;
@@ -48,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         session = new SessionManager(this);
         if(session.isLoggedIn()){
-            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+            Intent i = new Intent(LoginActivity.this, RestaurantsActivity.class);
             startActivity(i);
             finish();
         }
@@ -166,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             }
                         });
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent i = new Intent(LoginActivity.this, RestaurantsActivity.class);
                         startActivity(i);
                         finish();
                     }

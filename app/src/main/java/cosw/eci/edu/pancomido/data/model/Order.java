@@ -1,14 +1,14 @@
 package cosw.eci.edu.pancomido.data.model;
 
-import java.util.Date;
-
 /**
  * Created by NGS on 9/12/17.
  */
 
-public class Order {
+public class Order
+{
 
     private Integer id_order;
+
     private String creation_date;
 
     //private List<Command> commands; //Falta guardar los pedidos
@@ -16,28 +16,34 @@ public class Order {
     private User user_id;
 
 
-    public Order() {
+    public Order()
+    {
     }
 
-    public Order(Integer id_order, User user) {
+    public Order( Integer id_order, User user )
+    {
         this.id_order = id_order;
         this.user_id = user;
     }
 
-    public Integer getId_order() {
+    public Integer getId_order()
+    {
         return id_order;
     }
 
-    public void setId_order(Integer id_order) {
+    public void setId_order( Integer id_order )
+    {
         this.id_order = id_order;
     }
 
 
-    public User getUser_id() {
+    public User getUser_id()
+    {
         return user_id;
     }
 
-    public void setUser_id(User user) {
+    public void setUser_id( User user )
+    {
         this.user_id = user;
     }
 
@@ -65,17 +71,16 @@ public class Order {
     */
 
     @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id_order +
-                ", users=" + "" +
-                '}';
+    public String toString()
+    {
+        return "Order{" + "id=" + id_order + ", users=" + "" + '}';
     }
 
     /*
     En cola: 0, En progreso: 1, Listo=2
      */
-    public boolean isReady(){
+    public boolean isReady()
+    {
         Boolean ready = true;
         /*for(Command p : commands){
             ready = ready && p.getState()== 2 ? true : false;
@@ -83,11 +88,13 @@ public class Order {
         return ready;
     }
 
-    public String getCreation_date() {
+    public String getCreation_date()
+    {
         return creation_date;
     }
 
-    public void setCreation_date(String creation_date) {
+    public void setCreation_date( String creation_date )
+    {
         this.creation_date = creation_date;
     }
 

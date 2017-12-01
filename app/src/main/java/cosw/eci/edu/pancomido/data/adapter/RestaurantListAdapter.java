@@ -10,14 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.loadImage;
-import cosw.eci.edu.pancomido.ui.activity.MainActivity;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 
 /**

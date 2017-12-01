@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import cosw.eci.edu.pancomido.R;
-import cosw.eci.edu.pancomido.ui.activity.MainActivity;
+import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,7 +67,7 @@ public class PaymentSuccessFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
-                manager.beginTransaction().replace(R.id.fragment_container, MainActivity.restaurantListFragment).addToBackStack(null).commit();
+                manager.beginTransaction().replace( R.id.fragment_container, RestaurantsActivity.restaurantListFragment).addToBackStack( null).commit();
             }
         });
 
