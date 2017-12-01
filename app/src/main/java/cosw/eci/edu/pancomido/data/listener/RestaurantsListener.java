@@ -10,4 +10,6 @@ public interface RestaurantsListener
 {
 
     void onAddDishToOrder( Dish dish );
+
+    void showMessage();
 }

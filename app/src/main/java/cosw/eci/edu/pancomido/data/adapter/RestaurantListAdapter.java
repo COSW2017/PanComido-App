@@ -80,6 +80,8 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         }
 
         public void setRestaurantImage(String url) {
+
+            //TODO change this to use Picaso
             new loadImage(restaurantImage).execute(url);
 
         }

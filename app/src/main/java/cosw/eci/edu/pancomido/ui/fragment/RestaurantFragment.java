@@ -27,13 +27,12 @@ import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.misc.loadImage;
-import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RestaurantFragment.OnFragmentInteractionListener} interface
+ * {@link RestaurantsListener} interface
  * to handle interaction events.
  * Use the {@link RestaurantFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -227,7 +226,7 @@ public class RestaurantFragment
         listView.setLayoutManager( layoutManager );
         try
         {
-            DishAdapter dishAdapter = new DishAdapter( dishes, (RestaurantsActivity) getActivity(), restaurantsListener );
+            DishAdapter dishAdapter = new DishAdapter( dishes, listener );
             listView.setAdapter( dishAdapter );
 
         }
@@ -237,8 +236,6 @@ public class RestaurantFragment
         }
 
     }
-
-
 
 
 }

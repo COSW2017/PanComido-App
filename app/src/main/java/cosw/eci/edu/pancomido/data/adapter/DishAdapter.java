@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,6 @@ import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.misc.SessionManager;
-import cosw.eci.edu.pancomido.misc.loadImage;
-import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 /**
  * Created by Alejandra on 4/11/2017.
@@ -32,14 +31,12 @@ public class DishAdapter
 
     private final List<Dish> dishes;
 
-    private RestaurantsActivity view;
 
     private final RestaurantsListener restaurantsListener;
 
-    public DishAdapter( List<Dish> dishes, RestaurantsActivity view, @NonNull RestaurantsListener restaurantsListener )
+    public DishAdapter( List<Dish> dishes, @NonNull RestaurantsListener restaurantsListener )
     {
         this.dishes = dishes;
-        this.view = view;
         this.restaurantsListener = restaurantsListener;
     }
 
@@ -55,7 +52,8 @@ public class DishAdapter
     public void onBindViewHolder( final DishAdapter.viewHolder holder, final int position )
     {
         final Dish dish = dishes.get( position );
-        holder.setDishImage( dish.getImage() );
+        Picasso.with( holder.itemView.getContext() ).load( dish.getImage() ).into( holder.image );
+
         holder.setName( dish.getName() );
         holder.setPrice( dish.getPrice() + "" );
         holder.addQuantity.setOnClickListener( new View.OnClickListener()
@@ -103,7 +101,7 @@ public class DishAdapter
                 holder.manager.setDishes( gson.toJson( map ) );
             }
         }
-        view.showMessage();
+        restaurantsListener.showMessage();
     }
 
     private void addDish( int position, DishAdapter.viewHolder holder )
@@ -145,7 +143,7 @@ public class DishAdapter
 
         Dish dish = dishes.get( position );
 
-        view.showMessage();
+        restaurantsListener.showMessage();
     }
 
     @Override
@@ -185,10 +183,6 @@ public class DishAdapter
             manager = new SessionManager( itemView.getContext() );
         }
 
-        public void setDishImage( String url )
-        {
-            new loadImage( image ).execute( url );
-        }
 
         public void setName( String name )
         {
