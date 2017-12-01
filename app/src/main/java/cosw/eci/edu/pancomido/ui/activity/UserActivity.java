@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,12 +45,15 @@ public class UserActivity extends AppCompatActivity {
     private static final int CHOOSE_GALLERY_OPTION = 2;
 
     private static final String CANCEL = "Cancel";
+    private boolean changed = false;
 
     EditText phoneText;
     EditText passwordText;
-    SessionManager session;
     ImageView userImage;
     Spinner citySpinner;
+    User user = null;
+    SessionManager session = new SessionManager(this);
+    RetrofitNetwork network = new RetrofitNetwork();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +64,70 @@ public class UserActivity extends AppCompatActivity {
         passwordText = (EditText) findViewById(R.id.et_new_password);
         citySpinner = (Spinner) findViewById(R.id.sp_new_city);
 
-        session = new SessionManager(this);
-        //passwordText.setText(session.getPassword());
-        //phoneText.setText(session.getPhone());
+        RequestCallback<User> request = new RequestCallback<User>() {
+            @Override
+            public void onSuccess(final User response) {
+                UserActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        user = response;
+                        phoneText.setText(response.getCellphone());
+                        passwordText.setText(response.getUser_password());
+                        if (response.getImage() != null && !response.getImage().equals("")){
+                            byte[] decodedBytes = Base64.decode(response.getImage(), Base64.DEFAULT);
+                            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                            userImage.setImageBitmap(decodedBitmap);
+                        }
+                    }
+                });
+            }
 
+            @Override
+            public void onFailed(NetworkException e) {
+                e.printStackTrace();
+            }
+        };
+        network.getUserByEmail(session.getEmail(), request);
         List<String> spinnerArray = new ArrayList<>();
         spinnerArray.add("Bogotá");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, spinnerArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         citySpinner.setAdapter(adapter);
+        TextWatcher textWatcherPh = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() < 10){
+                    Toast.makeText(UserActivity.this, "Phone number needs to have at least 10 digits", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        phoneText.addTextChangedListener(textWatcherPh);
+        TextWatcher textWatcherPw = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() < 8){
+                    Toast.makeText(UserActivity.this, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        passwordText.addTextChangedListener(textWatcherPw);
     }
 
     public void updatePhoto(View view){
@@ -104,9 +162,10 @@ public class UserActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && data != null){
             switch (requestCode){
                 case TAKE_PHOTO_OPTION:
-                    Bitmap picture = null;
+                    Bitmap picture;
                     picture = (Bitmap) data.getExtras().get("data");
                     userImage.setImageBitmap(picture);
+                    changed = true;
                     break;
                 case CHOOSE_GALLERY_OPTION:
                     Uri imageUri = data.getData();
@@ -122,67 +181,23 @@ public class UserActivity extends AppCompatActivity {
                     }
                     Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     userImage.setImageBitmap(selectedImage);
+                    changed = true;
                     break;
             }
         }
     }
 
-    public void save(View view){
-        EditText newPhone = (EditText) findViewById(R.id.et_new_phone);
-        EditText newPass = (EditText) findViewById(R.id.et_new_password);
-        session = new SessionManager(this);
-        TextWatcher textWatcherPh = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+    public void saveUpdate(View view){
 
+        RequestCallback<User> userRequestCallback = new RequestCallback<User>() {
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.toString().length() < 10){
-                    Toast.makeText(UserActivity.this, "Phone number needs to have at least 10 digits", Toast.LENGTH_LONG).show();
+            public void onSuccess(User response) {
+                user.setCellphone(phoneText.getText().toString());
+                user.setUser_password(passwordText.getText().toString());
+                if (changed) {
+                    Bitmap image = ((BitmapDrawable) userImage.getDrawable()).getBitmap();
+                    user.setImage(encodeImage(image));
                 }
-            }
-        };
-        newPhone.addTextChangedListener(textWatcherPh);
-        TextWatcher textWatcherPw = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.toString().length() < 8){
-                    Toast.makeText(UserActivity.this, "Password must be at least 8 characters", Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-        newPass.addTextChangedListener(textWatcherPw);
-        String image = encodeImage();
-        String phone = newPhone.getText().toString();
-        String password = newPass.getText().toString();
-        final User user = null;
-
-        RetrofitNetwork network = new RetrofitNetwork();
-        RequestCallback<User> request = new RequestCallback<User>() {
-            @Override
-            public void onSuccess(final User response) {
-                UserActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        user.setUser_id(response.getUser_id());
-                        user.setEmail(response.getEmail());
-                        user.setFirstname(response.getFirstname());
-                        user.setLastname(response.getLastname());
-                    }
-                });
             }
 
             @Override
@@ -190,17 +205,13 @@ public class UserActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         };
-        user.setCellphone(phone);
-        user.setUser_password(password);
-        user.setImage(image);
-        network.updateUser(user, request);
-        Toast.makeText(UserActivity.this, "Profile updated successfully", Toast.LENGTH_LONG).show();
+        network.updateUser(user, userRequestCallback);
+        Toast.makeText(UserActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
     }
 
-    private String encodeImage(){
-        Bitmap image = ((BitmapDrawable) userImage.getDrawable()).getBitmap();
+    private String encodeImage(@NonNull Bitmap img){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] bytes = stream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
