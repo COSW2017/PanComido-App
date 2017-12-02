@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.SessionManager;
@@ -31,15 +32,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<Restaurant> restaurants;
     private HashMap<Integer, List<Dish>> dishesLists;
-    private HashMap<Integer, List<Integer>> dishesQuanty;
+    private final RestaurantsListener restaurantsListener;
 
 
-    public ExpandableListAdapter(Context context, List<Restaurant> restaurants, HashMap<Integer, List<Dish>> dishesLists,
-                                 HashMap<Integer, List<Integer>>  dishesQuanty){
+    public ExpandableListAdapter(Context context, RestaurantsListener listener, HashMap<Integer, List<Dish>> dishesLists){
         this.context = context;
-        this.restaurants = restaurants;
+        restaurantsListener = listener;
+        this.restaurants = restaurantsListener.getRestaurants();
         this.dishesLists = dishesLists;
-        this.dishesQuanty = dishesQuanty;
     }
 
     @Override
@@ -49,7 +49,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.dishesLists.get(restaurants.get(groupPosition).getId_restaurant()).size();
+        Restaurant restaurant = this.restaurants.get(groupPosition);
+        List<Dish> restaurantDishes = this.dishesLists.get(restaurant.getId_restaurant());
+        System.out.print(restaurantDishes == null);
+        return this.dishesLists.get(this.restaurants.get(groupPosition).getId_restaurant()).size();
     }
 
     @Override
@@ -100,56 +103,48 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.restaurant_row_item, null);
         }
-
+        Restaurant idRestaurant= restaurants.get(groupPosition);
+        Dish dish = dishesLists.get(idRestaurant.getId_restaurant()).get(childPosition);
         SessionManager sessionManager = new SessionManager(context);
-
         TextView name = (TextView) convertView.findViewById(R.id.dish_name_row);
         TextView quanty = (TextView) convertView.findViewById(R.id.dish_quanty_row);
         TextView price= (TextView) convertView.findViewById(R.id.dish_price_row);
-        int idRestaurant= restaurants.get(groupPosition).getId_restaurant();
-        name.setText(dishesLists.get(idRestaurant).get(childPosition).getName());
-        int price1 = (dishesLists.get(idRestaurant).get(childPosition).
-                getPrice()*dishesQuanty.get(idRestaurant).get(childPosition));
+        name.setText(dish.getName());
+        int price1 = dish.getPrice()*restaurantsListener.getDishQuanty(dish.getId_dish());
         price.setText("$ "+price1);
-        quanty.setText(dishesQuanty.get(idRestaurant).get(childPosition)+"");
+        quanty.setText(restaurantsListener.getDishQuanty(dish.getId_dish())+"");
 
-        setActionsButtons(convertView, sessionManager, restaurants.get(groupPosition).getId_restaurant(),
-                childPosition, quanty, price);
+        setActionsButtons(convertView, dish);
         return convertView;
     }
 
-    private void setActionsButtons(View convertView, final SessionManager sessionManager,
-                                   final int groupPosition,
-                                   final int childPosition, final TextView quanty, final TextView price) {
+    private void setActionsButtons(View convertView, final Dish dish) {
         Button addButton = (Button) convertView.findViewById(R.id.dish_add_row);
         Button delButton = (Button) convertView.findViewById(R.id.dish_del_row);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addProduct(groupPosition, childPosition, sessionManager, quanty, price);
-                addProduct(groupPosition, childPosition);
+                restaurantsListener.onAddDishToOrder(dish);
+                addProduct();
             }
         });
 
-        delButton.setOnClickListener(new View.OnClickListener() {
+        /*delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 delProduct(groupPosition, childPosition, sessionManager, quanty, price);
                 deleteProduct(groupPosition, childPosition);
             }
-        });
+        });*/
 
     }
 
-    private void addProduct(int position, int childPosition) {
-        int quanty1 = dishesQuanty.get(position).get(childPosition);
-        quanty1++;
-        dishesQuanty.get(position).set(childPosition, quanty1);
+    private void addProduct() {
         this.notifyDataSetChanged();
     }
 
     private void deleteProduct(int position, int childPosition){
-        int quanty1 = dishesQuanty.get(position).get(childPosition);
+        /*int quanty1 = dishesQuanty.get(position).get(childPosition);
         quanty1--;
         if(quanty1>0){
             dishesQuanty.get(position).set(childPosition, quanty1);
@@ -159,40 +154,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             if(dishesLists.size()<1){
                 restaurants.remove(position);
             }
-        }
+        }*/
         this.notifyDataSetChanged();
-    }
-
-    private void addProduct(int position, int childPosition, SessionManager sessionManager, TextView quanty, TextView price) {
-        String json = sessionManager.getDishes();
-        sessionManager.setQ(sessionManager.getQ()+1);
-        Dish dish = dishesLists.get(position).get(childPosition);
-        sessionManager.setPrice(sessionManager.getPrice()+dish.getPrice());
-        if(!json.isEmpty()){
-            Gson gson = new Gson();
-            HashMap<String, String> map = gson.fromJson(json, HashMap.class);
-            if(map.containsKey(dish.getId_dish()+
-                    ","+dish.getRestaurant().getId_restaurant())){
-                int quanty1 = Integer.parseInt(map.get(dish.getId_dish()+
-                        ","+dish.getRestaurant().getId_restaurant()));
-                quanty1+=1;
-                map.put(dish.getId_dish()
-                        +","+dish.getRestaurant().getId_restaurant(), quanty1+"");
-            }else{
-                map.put(dish.getId_dish()
-                        +","+dish.getRestaurant().getId_restaurant(), "1");
-            }
-            sessionManager.setDishes(gson.toJson(map));
-        }else {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(dish.getId_dish()+
-                    ","+dish.getRestaurant().getId_restaurant()+"", "1");
-            Gson gson = new Gson();
-            String json1 = gson.toJson(map);
-            Log.d("JSON", json1);
-            sessionManager.setDishes(json1);
-        }
-        OrderDetailFragment.refreshPrice();
     }
 
 
