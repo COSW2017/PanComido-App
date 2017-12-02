@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +25,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
@@ -67,7 +71,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        ActivityCompat.requestPermissions(this,  permissions, ACCESS_LOCATION_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, permissions, ACCESS_LOCATION_PERMISSION_CODE);
         //cambiar el correo y el nombre del usuario
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -82,8 +86,8 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        session.setUserId(""+response.getUser_id());
-                        userName.setText(response.getFirstname()+" "+response.getLastname());
+                        session.setUserId("" + response.getUser_id());
+                        userName.setText(response.getFirstname() + " " + response.getLastname());
                         userEmail.setText(response.getEmail());
                         if (response.getImage() != null) {
                             byte[] decodedString = Base64.decode(response.getImage(), Base64.DEFAULT);
@@ -99,7 +103,17 @@ public class MainActivity extends AppCompatActivity
 
             }
         };
-        retrofitNetwork.getUserByEmail(session.getEmail(),requestCallback);
+        retrofitNetwork.getUserByEmail(session.getEmail(), requestCallback);
+
+        String real_email = session.getEmail().replaceAll("\\.","dot").replaceAll("@","at");
+
+        // [START subscribe_topics]
+        FirebaseMessaging.getInstance().subscribeToTopic("user~"+real_email);
+        // [END subscribe_topics]
+
+        // Log and toast
+        String msg = ("Suscribed");
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
