@@ -112,11 +112,5 @@ public class Restaurant {
         this.image = image;
     }
 
-    /*public List<Order> getOrders() {
-        return orders;
-    }*/
 
-    /*public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }*/
 }

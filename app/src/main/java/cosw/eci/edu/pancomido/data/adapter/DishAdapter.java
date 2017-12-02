@@ -20,6 +20,7 @@ import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.misc.SessionManager;
+import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 /**
  * Created by Alejandra on 4/11/2017.
@@ -30,8 +31,6 @@ public class DishAdapter
 {
 
     private final List<Dish> dishes;
-
-
     private final RestaurantsListener restaurantsListener;
 
     public DishAdapter( List<Dish> dishes, @NonNull RestaurantsListener restaurantsListener )
@@ -62,89 +61,13 @@ public class DishAdapter
             public void onClick( View v )
             {
                 restaurantsListener.onAddDishToOrder( dish );
+                restaurantsListener.showMessage();
+
             }
         } );
-        /*holder.delQuantity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delProduct(position, holder);
-            }
-        });*/
+
     }
 
-    private void delProduct( int position, DishAdapter.viewHolder holder )
-    {
-        String json = holder.manager.getDishes();
-        if ( !json.isEmpty() )
-        {
-            Gson gson = new Gson();
-            HashMap<String, String> map = gson.fromJson( json, HashMap.class );
-            if ( map.containsKey( dishes.get( position ).getId_dish() + "," + dishes.get(
-                    position ).getRestaurant().getId_restaurant() ) )
-            {
-                holder.manager.setQ( holder.manager.getQ() < 1 ? 0 : holder.manager.getQ() - 1 );
-                holder.manager.setPrice(
-                        holder.manager.getPrice() < 1 ? 0 : holder.manager.getPrice() - dishes.get( position ).getPrice() );
-                int quanty = Integer.parseInt( map.get( dishes.get( position ).getId_dish() + "," + dishes.get(
-                        position ).getRestaurant().getId_restaurant() ) );
-                if ( quanty > 1 )
-                {
-                    quanty -= 1;
-                    map.put( dishes.get( position ).getId_dish() + "," + dishes.get(
-                            position ).getRestaurant().getId_restaurant() + "", quanty + "" );
-                }
-                else
-                {
-                    map.remove( dishes.get( position ).getId_dish() + "," + dishes.get(
-                            position ).getRestaurant().getId_restaurant() );
-                }
-                holder.manager.setDishes( gson.toJson( map ) );
-            }
-        }
-        restaurantsListener.showMessage();
-    }
-
-    private void addDish( int position, DishAdapter.viewHolder holder )
-    {
-        String json = holder.manager.getDishes();
-        holder.manager.setQ( holder.manager.getQ() + 1 );
-        holder.manager.setPrice( holder.manager.getPrice() + dishes.get( position ).getPrice() );
-        if ( !json.isEmpty() )
-        {
-            Gson gson = new Gson();
-            HashMap<String, String> map = gson.fromJson( json, HashMap.class );
-            if ( map.containsKey( dishes.get( position ).getId_dish() + "," + dishes.get(
-                    position ).getRestaurant().getId_restaurant() ) )
-            {
-                int quanty = Integer.parseInt( map.get( dishes.get( position ).getId_dish() + "," + dishes.get(
-                        position ).getRestaurant().getId_restaurant() ) );
-                quanty += 1;
-                map.put( dishes.get( position ).getId_dish() + "," + dishes.get(
-                        position ).getRestaurant().getId_restaurant(), quanty + "" );
-            }
-            else
-            {
-                map.put( dishes.get( position ).getId_dish() + "," + dishes.get(
-                        position ).getRestaurant().getId_restaurant(), "1" );
-            }
-            holder.manager.setDishes( gson.toJson( map ) );
-        }
-        else
-        {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(
-                    dishes.get( position ).getId_dish() + "," + dishes.get( position ).getRestaurant().getId_restaurant()
-                            + "", "1" );
-            Gson gson = new Gson();
-            String json1 = gson.toJson( map );
-            Log.d( "JSON", json1 );
-            holder.manager.setDishes( json1 );
-        }
-
-        Dish dish = dishes.get( position );
-
-        restaurantsListener.showMessage();
-    }
 
     @Override
     public int getItemCount()
@@ -162,15 +85,7 @@ public class DishAdapter
 
         TextView price;
 
-        TextView quantity;
-
-        TextView quanty;
-
-        TextView total;
-
         Button addQuantity;
-
-        SessionManager manager;
 
 
         public viewHolder( View itemView )
@@ -180,7 +95,6 @@ public class DishAdapter
             name = (TextView) itemView.findViewById( R.id.dish_name );
             price = (TextView) itemView.findViewById( R.id.dish_price );
             addQuantity = (Button) itemView.findViewById( R.id.add_product );
-            manager = new SessionManager( itemView.getContext() );
         }
 
 
@@ -192,11 +106,6 @@ public class DishAdapter
         public void setPrice( String price )
         {
             this.price.setText( "$ " + price );
-        }
-
-        public SessionManager getManager()
-        {
-            return manager;
         }
 
     }

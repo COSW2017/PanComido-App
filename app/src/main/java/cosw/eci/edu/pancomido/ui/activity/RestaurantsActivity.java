@@ -24,10 +24,15 @@ import android.widget.Toast;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.OrdersManager;
+import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.model.User;
 import cosw.eci.edu.pancomido.data.network.RequestCallback;
 import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
@@ -202,7 +207,6 @@ public class RestaurantsActivity
     @Override
     public boolean onNavigationItemSelected( MenuItem item )
     {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if ( id == R.id.nav_camera )
@@ -242,7 +246,7 @@ public class RestaurantsActivity
     public void showMessage()
     {
         Snackbar snackbar = Snackbar.make( this.findViewById( android.R.id.content ).getRootView(),
-                "See order (" + ( session.getQ() + 1 ) + ") Total: " + session.getPrice(),
+                "See order (" + (ordersManager.getDishesCount() ) + ") Total: " + ordersManager.getOrderTotalPrice(),
                 Snackbar.LENGTH_LONG ).setAction( "Go", new View.OnClickListener()
         {
             @Override
@@ -259,5 +263,25 @@ public class RestaurantsActivity
     public void onAddDishToOrder( Dish dish )
     {
         ordersManager.addDish( dish );
+    }
+
+    @Override
+    public int onGetTotalOrder() {
+        return ordersManager.getOrderTotalPrice();
+    }
+
+    @Override
+    public List<Restaurant> getRestaurants() {
+        return ordersManager.getRestaurants();
+    }
+
+    @Override
+    public List<Dish> getDishesByRestaurant(int idRestaurant) {
+        return ordersManager.getDishesByRestaurant(idRestaurant);
+    }
+
+    @Override
+    public int getDishQuanty(int idDish) {
+        return ordersManager.getDishCount(idDish);
     }
 }
