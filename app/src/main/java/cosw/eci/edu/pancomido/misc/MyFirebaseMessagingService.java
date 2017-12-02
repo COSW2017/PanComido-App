@@ -22,15 +22,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import cosw.eci.edu.pancomido.R;
-import cosw.eci.edu.pancomido.ui.activity.MainActivity;
+import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -96,7 +94,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void sendNotification(String messageBody) {
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, RestaurantsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
