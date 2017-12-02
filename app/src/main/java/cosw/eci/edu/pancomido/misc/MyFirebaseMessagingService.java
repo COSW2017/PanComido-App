@@ -22,12 +22,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {

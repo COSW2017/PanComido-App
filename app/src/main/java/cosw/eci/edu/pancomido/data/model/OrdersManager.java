@@ -18,7 +18,7 @@ public class OrdersManager
         orderDishes.add( dish );
     }
 
-    public List<Dish> getDishesByRestaurant( int restaurantId )
+    public List<Dish> getDishesByRestaurant(int restaurantId )
     {
         //TODO implement this
         return null;

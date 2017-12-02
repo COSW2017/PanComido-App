@@ -9,7 +9,7 @@ import cosw.eci.edu.pancomido.data.model.Dish;
 public interface RestaurantsListener
 {
 
-    void onAddDishToOrder( Dish dish );
+    void onAddDishToOrder(Dish dish);
 
     void showMessage();
 }

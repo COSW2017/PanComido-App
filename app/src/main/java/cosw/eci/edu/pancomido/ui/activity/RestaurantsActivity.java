@@ -19,6 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
@@ -34,8 +38,8 @@ import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantListFragment;
 
 public class RestaurantsActivity
-    extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener, RestaurantsListener
+        extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, RestaurantsListener
 {
 
     public static RestaurantListFragment restaurantListFragment = new RestaurantListFragment();
@@ -53,7 +57,7 @@ public class RestaurantsActivity
     private final OrdersManager ordersManager = new OrdersManager();
 
     String[] permissions =
-        { android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION };
+            { android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION };
 
     private final int ACCESS_LOCATION_PERMISSION_CODE = 1;
 
@@ -69,13 +73,15 @@ public class RestaurantsActivity
         //session = new SessionManager(this);
         DrawerLayout drawer = (DrawerLayout) findViewById( R.id.drawer_layout );
         ActionBarDrawerToggle toggle =
-            new ActionBarDrawerToggle( this, drawer, toolbar, R.string.navigation_drawer_open,
-                                       R.string.navigation_drawer_close );
+                new ActionBarDrawerToggle( this, drawer, toolbar, R.string.navigation_drawer_open,
+                        R.string.navigation_drawer_close );
         drawer.setDrawerListener( toggle );
         toggle.syncState();
 
         ActivityCompat.requestPermissions( this, permissions, ACCESS_LOCATION_PERMISSION_CODE );
         //cambiar el correo y el nombre del usuario
+
+
 
         NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
@@ -100,7 +106,7 @@ public class RestaurantsActivity
                         {
                             byte[] decodedString = Base64.decode( response.getImage(), Base64.DEFAULT );
                             Bitmap decodedByte =
-                                BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+                                    BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
                             userImage.setImageBitmap( decodedByte );
                         }
                     }
@@ -114,6 +120,21 @@ public class RestaurantsActivity
             }
         };
         retrofitNetwork.getUserByEmail( session.getEmail(), requestCallback );
+
+
+
+        String real_email = session.getEmail().replaceAll("\\.","dot").replaceAll("@","at");
+
+        // [START subscribe_topics]
+
+        FirebaseMessaging.getInstance().subscribeToTopic("user~"+real_email);
+
+
+        // [END subscribe_topics]
+
+        // Log and toast
+        String msg = ("Suscribed");
+        Toast.makeText(RestaurantsActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -131,7 +152,7 @@ public class RestaurantsActivity
             case ACCESS_LOCATION_PERMISSION_CODE:
                 FragmentManager manager = getFragmentManager();
                 manager.beginTransaction().replace( R.id.fragment_container, restaurantListFragment ).addToBackStack(
-                    null ).commit();
+                        null ).commit();
                 break;
             default:
                 super.onRequestPermissionsResult( requestCode, permissions, grantResults );
@@ -215,14 +236,14 @@ public class RestaurantsActivity
         OrderDetailFragment paymentFragment = new OrderDetailFragment();
         FragmentManager manager = getFragmentManager();
         manager.beginTransaction().replace( R.id.fragment_container, paymentFragment ).addToBackStack(
-            "detail" ).commit();
+                "detail" ).commit();
     }
 
     public void showMessage()
     {
         Snackbar snackbar = Snackbar.make( this.findViewById( android.R.id.content ).getRootView(),
-                                           "See order (" + ( session.getQ() + 1 ) + ") Total: " + session.getPrice(),
-                                           Snackbar.LENGTH_LONG ).setAction( "Go", new View.OnClickListener()
+                "See order (" + ( session.getQ() + 1 ) + ") Total: " + session.getPrice(),
+                Snackbar.LENGTH_LONG ).setAction( "Go", new View.OnClickListener()
         {
             @Override
             public void onClick( View view )

@@ -26,7 +26,7 @@ import cosw.eci.edu.pancomido.misc.SessionManager;
  */
 
 public class DishAdapter
-    extends RecyclerView.Adapter<DishAdapter.viewHolder>
+        extends RecyclerView.Adapter<DishAdapter.viewHolder>
 {
 
     private final List<Dish> dishes;
@@ -80,23 +80,23 @@ public class DishAdapter
             Gson gson = new Gson();
             HashMap<String, String> map = gson.fromJson( json, HashMap.class );
             if ( map.containsKey( dishes.get( position ).getId_dish() + "," + dishes.get(
-                position ).getRestaurant().getId_restaurant() ) )
+                    position ).getRestaurant().getId_restaurant() ) )
             {
                 holder.manager.setQ( holder.manager.getQ() < 1 ? 0 : holder.manager.getQ() - 1 );
                 holder.manager.setPrice(
-                    holder.manager.getPrice() < 1 ? 0 : holder.manager.getPrice() - dishes.get( position ).getPrice() );
+                        holder.manager.getPrice() < 1 ? 0 : holder.manager.getPrice() - dishes.get( position ).getPrice() );
                 int quanty = Integer.parseInt( map.get( dishes.get( position ).getId_dish() + "," + dishes.get(
-                    position ).getRestaurant().getId_restaurant() ) );
+                        position ).getRestaurant().getId_restaurant() ) );
                 if ( quanty > 1 )
                 {
                     quanty -= 1;
                     map.put( dishes.get( position ).getId_dish() + "," + dishes.get(
-                        position ).getRestaurant().getId_restaurant() + "", quanty + "" );
+                            position ).getRestaurant().getId_restaurant() + "", quanty + "" );
                 }
                 else
                 {
                     map.remove( dishes.get( position ).getId_dish() + "," + dishes.get(
-                        position ).getRestaurant().getId_restaurant() );
+                            position ).getRestaurant().getId_restaurant() );
                 }
                 holder.manager.setDishes( gson.toJson( map ) );
             }
@@ -114,18 +114,18 @@ public class DishAdapter
             Gson gson = new Gson();
             HashMap<String, String> map = gson.fromJson( json, HashMap.class );
             if ( map.containsKey( dishes.get( position ).getId_dish() + "," + dishes.get(
-                position ).getRestaurant().getId_restaurant() ) )
+                    position ).getRestaurant().getId_restaurant() ) )
             {
                 int quanty = Integer.parseInt( map.get( dishes.get( position ).getId_dish() + "," + dishes.get(
-                    position ).getRestaurant().getId_restaurant() ) );
+                        position ).getRestaurant().getId_restaurant() ) );
                 quanty += 1;
                 map.put( dishes.get( position ).getId_dish() + "," + dishes.get(
-                    position ).getRestaurant().getId_restaurant(), quanty + "" );
+                        position ).getRestaurant().getId_restaurant(), quanty + "" );
             }
             else
             {
                 map.put( dishes.get( position ).getId_dish() + "," + dishes.get(
-                    position ).getRestaurant().getId_restaurant(), "1" );
+                        position ).getRestaurant().getId_restaurant(), "1" );
             }
             holder.manager.setDishes( gson.toJson( map ) );
         }
@@ -133,8 +133,8 @@ public class DishAdapter
         {
             HashMap<String, String> map = new HashMap<>();
             map.put(
-                dishes.get( position ).getId_dish() + "," + dishes.get( position ).getRestaurant().getId_restaurant()
-                    + "", "1" );
+                    dishes.get( position ).getId_dish() + "," + dishes.get( position ).getRestaurant().getId_restaurant()
+                            + "", "1" );
             Gson gson = new Gson();
             String json1 = gson.toJson( map );
             Log.d( "JSON", json1 );
@@ -153,7 +153,7 @@ public class DishAdapter
     }
 
     class viewHolder
-        extends RecyclerView.ViewHolder
+            extends RecyclerView.ViewHolder
     {
 
         ImageView image;
