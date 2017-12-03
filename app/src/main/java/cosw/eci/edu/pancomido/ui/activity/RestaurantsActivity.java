@@ -284,4 +284,9 @@ public class RestaurantsActivity
     public int getDishQuanty(int idDish) {
         return ordersManager.getDishCount(idDish);
     }
+
+    @Override
+    public void deleteDishFromOrder(int idDish) {
+        ordersManager.delDish(idDish);
+    }
 }

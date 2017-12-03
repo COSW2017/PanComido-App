@@ -97,7 +97,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -105,7 +105,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
         Restaurant idRestaurant= restaurants.get(groupPosition);
         Dish dish = dishesLists.get(idRestaurant.getId_restaurant()).get(childPosition);
-        SessionManager sessionManager = new SessionManager(context);
         TextView name = (TextView) convertView.findViewById(R.id.dish_name_row);
         TextView quanty = (TextView) convertView.findViewById(R.id.dish_quanty_row);
         TextView price= (TextView) convertView.findViewById(R.id.dish_price_row);
@@ -113,12 +112,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         int price1 = dish.getPrice()*restaurantsListener.getDishQuanty(dish.getId_dish());
         price.setText("$ "+price1);
         quanty.setText(restaurantsListener.getDishQuanty(dish.getId_dish())+"");
-
-        setActionsButtons(convertView, dish);
+        setActionsButtons(convertView, dish, childPosition, groupPosition);
         return convertView;
     }
 
-    private void setActionsButtons(View convertView, final Dish dish) {
+    private void setActionsButtons(View convertView, final Dish dish, final int childPosition, final int groupPosition) {
         Button addButton = (Button) convertView.findViewById(R.id.dish_add_row);
         Button delButton = (Button) convertView.findViewById(R.id.dish_del_row);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -129,63 +127,32 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        /*delButton.setOnClickListener(new View.OnClickListener() {
+        delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delProduct(groupPosition, childPosition, sessionManager, quanty, price);
-                deleteProduct(groupPosition, childPosition);
+               deleteProduct(dish, childPosition, groupPosition);
             }
-        });*/
+        });
 
     }
 
     private void addProduct() {
         this.notifyDataSetChanged();
-    }
-
-    private void deleteProduct(int position, int childPosition){
-        /*int quanty1 = dishesQuanty.get(position).get(childPosition);
-        quanty1--;
-        if(quanty1>0){
-            dishesQuanty.get(position).set(childPosition, quanty1);
-        }else{
-            dishesQuanty.get(position).remove(childPosition);
-            dishesLists.get(position).remove(childPosition);
-            if(dishesLists.size()<1){
-                restaurants.remove(position);
-            }
-        }*/
-        this.notifyDataSetChanged();
-    }
-
-
-    private void delProduct(int position, int childPosition, SessionManager sessionManager,  TextView quanty, TextView price) {
-        String json = sessionManager.getDishes();
-        Dish dish = dishesLists.get(position).get(childPosition);
-        if(!json.isEmpty()){
-            Gson gson = new Gson();
-            HashMap<String, String> map = gson.fromJson(json, HashMap.class);
-            if(map.containsKey(dish.getId_dish()+
-                    ","+dish.getRestaurant().getId_restaurant())){
-                sessionManager.setQ(sessionManager.getQ()<1 ? 0 : sessionManager.getQ()-1);
-                sessionManager.setPrice(sessionManager.getPrice()<1 ? 0 : sessionManager.getPrice()-
-                        dish.getPrice());
-                int quanty1 = Integer.parseInt(map.get(dish.getId_dish()+
-                        ","+dish.getRestaurant().getId_restaurant()));
-                if(quanty1 > 1){
-                    quanty1-=1;
-                    map.put(dish.getId_dish()
-                            +","+dish.getRestaurant().getId_restaurant()+"", quanty1+"");
-                }else {
-                    map.remove(dish.getId_dish()+","+
-                            dish.getRestaurant().getId_restaurant());
-                }
-                sessionManager.setDishes(gson.toJson(map));
-            }
-        }
         OrderDetailFragment.refreshPrice();
     }
 
+    private void deleteProduct(Dish dish, int childPosition, int groupPosition){
+        restaurantsListener.deleteDishFromOrder(dish.getId_dish());
+        if(restaurantsListener.getDishQuanty(dish.getId_dish())<1){
+            dishesLists.get(dish.getRestaurant().getId_restaurant()).remove(childPosition);
+        }
+        if(dishesLists.get(dish.getRestaurant().getId_restaurant()).size()<1){
+            dishesLists.remove(dish.getRestaurant().getId_restaurant());
+            restaurants.remove(groupPosition);
+        }
+        this.notifyDataSetChanged();
+        OrderDetailFragment.refreshPrice();
+    }
 
 
     @Override
