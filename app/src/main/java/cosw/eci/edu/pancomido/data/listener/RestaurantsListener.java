@@ -21,6 +21,8 @@ public interface RestaurantsListener {
 
     int getDishQuanty(int idDish);
 
+    void deleteDishFromOrder(int idDish);
+
 
 
     void showMessage();

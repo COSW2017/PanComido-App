@@ -50,8 +50,7 @@ public class OrderDetailFragment extends Fragment {
     private HashMap<Integer, List<Integer>> dishesQuanty;
     private Integer q =0;
     private static TextView totalOrder;
-    private static SessionManager sessionManager;
-    private RestaurantsListener restaurantsListener;
+    private static RestaurantsListener restaurantsListener;
 
 
     private OnFragmentInteractionListener mListener;
@@ -78,7 +77,6 @@ public class OrderDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_order_detail, container, false);
         restaurantsListener = (RestaurantsActivity) getActivity();
-        sessionManager = new SessionManager(getActivity());
         goPay = (Button) view.findViewById(R.id.goToPay);
         goPay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +135,6 @@ public class OrderDetailFragment extends Fragment {
     }
 
     public static void refreshPrice(){
-        totalOrder.setText("Total: $"+sessionManager.getPrice()+"");
+        totalOrder.setText("Total: $"+restaurantsListener.onGetTotalOrder()+"");
     }
 }
