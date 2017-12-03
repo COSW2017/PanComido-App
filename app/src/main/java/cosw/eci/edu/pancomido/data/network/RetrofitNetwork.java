@@ -324,7 +324,7 @@ public class RetrofitNetwork
         {
             @Override
             public void run() {
-                Call call = networkService.addCommandDish(idDish, idCommand);
+                Call call = networkService.addCommandDish(idCommand, idDish);
                 try
                 {
                     Response<Boolean> execute = call.execute();

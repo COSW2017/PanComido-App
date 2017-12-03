@@ -33,7 +33,7 @@ import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.misc.loadImage;
 import cosw.eci.edu.pancomido.ui.activity.LoginActivity;
-import cosw.eci.edu.pancomido.ui.activity.MainActivity;
+import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 
 /**
@@ -208,7 +208,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         listView.setLayoutManager( layoutManager );
         try {
-            DishAdapter dishAdapter = new DishAdapter(dishes, (MainActivity) getActivity());
+            DishAdapter dishAdapter = new DishAdapter(dishes, (RestaurantsActivity) getActivity());
             listView.setAdapter(dishAdapter);
 
         }catch(Exception e){

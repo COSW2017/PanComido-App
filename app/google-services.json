@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "183020465667",
+    "firebase_url": "https://pancomido-8e6d6.firebaseio.com",
+    "project_id": "pancomido-8e6d6",
+    "storage_bucket": "pancomido-8e6d6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183020465667:android:df87bab7921446fa",
+        "android_client_info": {
+          "package_name": "cosw.eci.edu.pancomido"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "183020465667-lhtr8cnj2e0nfhtcl961puvm7c23t44h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA4kwvCD_CJmk0MmyJquzMODuhI3-VKos"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

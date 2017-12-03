@@ -12,12 +12,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.misc.loadImage;
-import cosw.eci.edu.pancomido.ui.activity.MainActivity;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 
 /**
@@ -44,7 +45,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     public void onBindViewHolder(viewHolder holder, int position) {
         final Restaurant r = restaurants.get(position);
         holder.setName(r.getName());
-        holder.setRestaurantImage(r.getImage());
+        Picasso.with( holder.itemView.getContext() ).load( r.getImage() ).into( holder.row );
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,11 +80,6 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
         public ImageView getRestaurantImage() {
             return restaurantImage;
-        }
-
-        public void setRestaurantImage(String url) {
-            new loadImage(restaurantImage).execute(url);
-
         }
 
         public TextView getName() {

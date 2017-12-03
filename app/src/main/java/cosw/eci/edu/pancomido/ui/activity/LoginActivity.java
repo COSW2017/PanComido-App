@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         session = new SessionManager(this);
         if(session.isLoggedIn()){
-            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+            Intent i = new Intent(LoginActivity.this, RestaurantsActivity.class);
             startActivity(i);
             finish();
         }
@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             }
                         });
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent i = new Intent(LoginActivity.this, RestaurantsActivity.class);
                         startActivity(i);
                         finish();
                     }

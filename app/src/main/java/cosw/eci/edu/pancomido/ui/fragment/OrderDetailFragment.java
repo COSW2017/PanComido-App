@@ -21,12 +21,14 @@ import java.util.Map;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.adapter.ExpandableListAdapter;
+import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.network.RequestCallback;
 import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
+import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 
 /**
@@ -38,10 +40,7 @@ import cosw.eci.edu.pancomido.misc.SessionManager;
  * create an instance of this fragment.
  */
 public class OrderDetailFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private View view;
     private Button goPay;
     private ExpandableListView expandableListView;
@@ -52,32 +51,18 @@ public class OrderDetailFragment extends Fragment {
     private Integer q =0;
     private static TextView totalOrder;
     private static SessionManager sessionManager;
+    private RestaurantsListener restaurantsListener;
 
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     public OrderDetailFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OrderDetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static OrderDetailFragment newInstance(String param1, String param2) {
+    public static OrderDetailFragment newInstance() {
         OrderDetailFragment fragment = new OrderDetailFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,10 +70,6 @@ public class OrderDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -96,6 +77,7 @@ public class OrderDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_order_detail, container, false);
+        restaurantsListener = (RestaurantsActivity) getActivity();
         sessionManager = new SessionManager(getActivity());
         goPay = (Button) view.findViewById(R.id.goToPay);
         goPay.setOnClickListener(new View.OnClickListener() {
@@ -106,55 +88,20 @@ public class OrderDetailFragment extends Fragment {
         });
         expandableListView = (ExpandableListView) view.findViewById(R.id.list_commands);
         totalOrder = (TextView) view.findViewById(R.id.resume_total);
-        totalOrder.setText("Total: $"+sessionManager.getPrice()+"");
-        restaurants = new ArrayList<>();
+        totalOrder.setText("Total: $"+restaurantsListener.onGetTotalOrder()+"");
         dishesLists = new HashMap<>();
-        dishesQuanty = new HashMap<>();
         getDishes();
         return view;
     }
 
     private void getDishes() {
-        Gson gson = new Gson();
-        map = gson.fromJson(sessionManager.getDishes(), HashMap.class);
-        q = map.size();
-        for(Map.Entry<String, String> entry : map.entrySet()){
-            String[] key = entry.getKey().split(",");
-            final Integer cant = Integer.parseInt(entry.getValue());
-            Integer id_rest = Integer.parseInt(key[1]);
-            Integer id_dish = Integer.parseInt(key[0]);
-            final RetrofitNetwork r = new RetrofitNetwork();
-            r.getDishById(id_rest, id_dish, new RequestCallback<Dish>() {
-                @Override
-                public void onSuccess(final Dish response) {
-                    Boolean hasKey =dishesLists.containsKey(response.getRestaurant().getId_restaurant());
-                    if(!hasKey){
-                        restaurants.add(response.getRestaurant());
-                        dishesLists.put(response.getRestaurant().getId_restaurant(), new ArrayList<Dish>());
-                        dishesQuanty.put(response.getRestaurant().getId_restaurant(), new ArrayList<Integer>());
-                    }
-                    dishesLists.get(response.getRestaurant().getId_restaurant()).add(response);
-                    dishesQuanty.get(response.getRestaurant().getId_restaurant()).add(cant);
-                    synchronized (q){
-                        q-=1;
-                        if(q==0){
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ExpandableListAdapter listAdapter = new ExpandableListAdapter(getActivity(), restaurants, dishesLists, dishesQuanty);
-                                    expandableListView.setAdapter(listAdapter);
-                                }
-                            });
-
-                        }
-                    }
-                }
-                @Override
-                public void onFailed(NetworkException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
+       List<Restaurant> restaurants = restaurantsListener.getRestaurants();
+       for(Restaurant r : restaurants){
+           List<Dish> dishes = restaurantsListener.getDishesByRestaurant(r.getId_restaurant());
+           dishesLists.put(r.getId_restaurant(), dishes);
+       }
+        ExpandableListAdapter listAdapter = new ExpandableListAdapter(getActivity(), restaurantsListener, dishesLists);
+        expandableListView.setAdapter(listAdapter);
     }
 
     private void goToPay() {
@@ -184,16 +131,6 @@ public class OrderDetailFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

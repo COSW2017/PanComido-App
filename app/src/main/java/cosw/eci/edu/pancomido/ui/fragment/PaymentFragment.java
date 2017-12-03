@@ -48,7 +48,6 @@ import cosw.eci.edu.pancomido.data.network.RequestCallback;
 import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
-import cosw.eci.edu.pancomido.ui.activity.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -315,8 +314,22 @@ public class PaymentFragment extends Fragment{
                                     public void onSuccess(Boolean response) {
                                         if(response){
                                             System.out.println(id_dish+" added");
+                                            getActivity().runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    FragmentManager manager = getFragmentManager();
+                                                    manager.beginTransaction().replace(R.id.fragment_container, new PaymentSuccessFragment()).addToBackStack(null).commit();
+                                                }
+                                            });
+                                            sessionManager.clearOrder();
                                         }else{
                                             System.out.println(id_dish+" not added");
+                                            getActivity().runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                         }
                                     }
 
@@ -340,14 +353,10 @@ public class PaymentFragment extends Fragment{
 
                 SimpleDateFormat sdf = new SimpleDateFormat(
                         "yyyy-MM-dd");
-
-
                 Command command = new Command();
                 command.setCreation_date(sdf.format(new java.sql.Date(Calendar.getInstance().getTime().getTime())));
-
                 command.setId_order(order);
                 command.setState(1);
-
                 network.addCommand(command, rc_command);
             }
 
@@ -367,12 +376,6 @@ public class PaymentFragment extends Fragment{
         toRegister.setUser_id(u);
 
         network.addOrder(toRegister, rc_order);
-
-
-
-        FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().replace(R.id.fragment_container, new PaymentSuccessFragment()).addToBackStack(null).commit();
-
 
     }
 
