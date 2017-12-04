@@ -46,4 +46,6 @@
     <string name="continue_pay">Continue</string>
     <string name="plus">+</string>
     <string name="default_notification_channel_id">0</string>
+    <string name="order_history">Order History</string>
+    <string name="order_again">Order Again</string>
 </resources>
