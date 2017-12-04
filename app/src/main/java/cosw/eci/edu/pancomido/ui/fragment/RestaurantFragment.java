@@ -24,7 +24,9 @@ import android.widget.TextView;
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.adapter.CommentsAdapter;
 import cosw.eci.edu.pancomido.data.adapter.DishAdapter;
+import cosw.eci.edu.pancomido.data.model.Comment;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.data.network.RequestCallback;
@@ -51,32 +53,21 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
     private static View view;
     private ImageView restaurantImage;
     private TextView restaurantName;
     private Button menu, comments;
     private RecyclerView listView;
     private LinearLayout progressBar, name, restaurant_options;
-    private static SessionManager sessionManager;
     private Bundle args;
+    private Restaurant restaurant;
 
     private OnFragmentInteractionListener mListener;
 
     public RestaurantFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RestaurantFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static RestaurantFragment newInstance(String param1, String param2) {
         RestaurantFragment fragment = new RestaurantFragment();
 
@@ -95,7 +86,6 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_restaurant, container, false);
         args = this.getArguments();
-        sessionManager = new SessionManager(getActivity());
         progressBar = (LinearLayout) view.findViewById(R.id.linearProgressBar);
         name = (LinearLayout) view.findViewById(R.id.name);
         restaurantImage = (ImageView) view.findViewById(R.id.restaurant_image);
@@ -105,21 +95,15 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         restaurant_options = (LinearLayout) view.findViewById(R.id.restaurant_options);
         menu.setOnClickListener(this);
         comments.setOnClickListener(this);
-
         showMenu();
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-
-
-
-
 
     @Override
     public void onAttach(Context context) {
@@ -146,8 +130,29 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
     }
 
     private void showComments() {
+        hideElements();
         menu.setTypeface(null, Typeface.NORMAL);
         comments.setTypeface(null, Typeface.BOLD);
+        final RetrofitNetwork r = new RetrofitNetwork();
+        Log.d("RESSSSSSSSSS", ""+restaurant.getId_restaurant());
+        r.getRestaurantComments(restaurant.getId_restaurant(), new RequestCallback<List<Comment>>() {
+            @Override
+            public void onSuccess(final List<Comment> response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        configureRecyclerViewComments(response);
+                        showElements();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailed(NetworkException e) {
+                e.printStackTrace();
+
+            }
+        });
 
     }
 
@@ -158,7 +163,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         r.getRestaurantInformation(args.get("name")+"", new RequestCallback<Restaurant>() {
             @Override
             public void onSuccess(final Restaurant response) {
-                Log.d("Restaurant", response.getId_restaurant()+"");
+                restaurant = response;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -175,7 +180,7 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                configureRecyclerView(response);
+                                configureRecyclerViewDishes(response);
                                 showElements();
                             }
                         });
@@ -202,7 +207,30 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         listView.setVisibility(View.VISIBLE);
     }
 
-    private void configureRecyclerView(List<Dish> dishes){
+    private void hideElements() {
+        progressBar.setVisibility(View.VISIBLE);
+        restaurantImage.setVisibility(View.GONE);
+        name.setVisibility(View.GONE);
+        restaurant_options.setVisibility(View.GONE);
+        listView.setVisibility(View.GONE);
+    }
+
+    private void configureRecyclerViewComments(List<Comment> comments){
+        listView = (RecyclerView) view.findViewById(R.id.restaurant_list);
+        listView.setHasFixedSize( true );
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        listView.setLayoutManager( layoutManager );
+        try {
+            CommentsAdapter commentsAdapter = new CommentsAdapter(comments);
+            listView.setAdapter(commentsAdapter);
+
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
+    }
+
+    private void configureRecyclerViewDishes(List<Dish> dishes){
         listView = (RecyclerView) view.findViewById(R.id.restaurant_list);
         listView.setHasFixedSize( true );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -216,17 +244,6 @@ public class RestaurantFragment extends Fragment implements View.OnClickListener
         }
 
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

@@ -9,33 +9,17 @@ public class Comment {
 
     private int id_comment;
 
-    private String comment;
-    private Date date;
+    private String comment_des;
+    private Date comment_date;
 
     private Restaurant id_restaurant;
 
     public Comment(String comment, Date date) {
-        this.comment = comment;
-        this.date = date;
+        this.comment_des = comment;
+        this.comment_date = date;
     }
 
     public Comment() {
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public int getId_comment() {
@@ -52,5 +36,21 @@ public class Comment {
 
     public void setId_restaurant(Restaurant id_restaurant) {
         this.id_restaurant = id_restaurant;
+    }
+
+    public String getComment_des() {
+        return comment_des;
+    }
+
+    public void setComment_des(String comment_des) {
+        this.comment_des = comment_des;
+    }
+
+    public Date getComment_date() {
+        return comment_date;
+    }
+
+    public void setComment_date(Date comment_date) {
+        this.comment_date = comment_date;
     }
 }
