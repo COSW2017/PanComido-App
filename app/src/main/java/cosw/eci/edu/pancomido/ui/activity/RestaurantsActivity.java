@@ -1,5 +1,7 @@
 package cosw.eci.edu.pancomido.ui.activity;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -39,6 +41,7 @@ import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.ui.fragment.OrderDetailFragment;
+import cosw.eci.edu.pancomido.ui.fragment.OrderHistoryFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantListFragment;
 
@@ -75,19 +78,14 @@ public class RestaurantsActivity
         session = new SessionManager( this );
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
-        //session = new SessionManager(this);
         DrawerLayout drawer = (DrawerLayout) findViewById( R.id.drawer_layout );
         ActionBarDrawerToggle toggle =
                 new ActionBarDrawerToggle( this, drawer, toolbar, R.string.navigation_drawer_open,
                         R.string.navigation_drawer_close );
         drawer.setDrawerListener( toggle );
         toggle.syncState();
-
         ActivityCompat.requestPermissions( this, permissions, ACCESS_LOCATION_PERMISSION_CODE );
         //cambiar el correo y el nombre del usuario
-
-
-
         NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
         userEmail = (TextView) navigationView.getHeaderView( 0 ).findViewById( R.id.email );
@@ -119,24 +117,14 @@ public class RestaurantsActivity
             }
 
             @Override
-            public void onFailed( NetworkException e )
-            {
-
+            public void onFailed( NetworkException e ){
             }
         };
         retrofitNetwork.getUserByEmail( session.getEmail(), requestCallback );
-
-
-
         String real_email = session.getEmail().replaceAll("\\.","dot").replaceAll("@","at");
-
         // [START subscribe_topics]
-
         FirebaseMessaging.getInstance().subscribeToTopic("user~"+real_email);
-
-
         // [END subscribe_topics]
-
         // Log and toast
         String msg = ("Suscribed");
         Toast.makeText(RestaurantsActivity.this, msg, Toast.LENGTH_SHORT).show();
@@ -145,10 +133,8 @@ public class RestaurantsActivity
     @Override
     public void onRequestPermissionsResult( int requestCode, String[] permissions, int[] grantResults )
     {
-        for ( int grantResult : grantResults )
-        {
-            if ( grantResult == -1 )
-            {
+        for ( int grantResult : grantResults ){
+            if ( grantResult == -1 ){
                 return;
             }
         }
@@ -181,7 +167,6 @@ public class RestaurantsActivity
     @Override
     public boolean onCreateOptionsMenu( Menu menu )
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate( R.menu.main, menu );
         return true;
     }
@@ -189,12 +174,7 @@ public class RestaurantsActivity
     @Override
     public boolean onOptionsItemSelected( MenuItem item )
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if ( id == R.id.action_settings )
         {
             return true;
@@ -216,7 +196,9 @@ public class RestaurantsActivity
         }
         else if ( id == R.id.nav_gallery )
         {
-
+            Fragment fragment = new OrderHistoryFragment();
+            FragmentManager manager =  getFragmentManager();
+            manager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack("history").commit();
         }
         else if ( id == R.id.nav_slideshow )
         {
