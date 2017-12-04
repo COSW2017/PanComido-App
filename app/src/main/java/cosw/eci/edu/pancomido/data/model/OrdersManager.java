@@ -83,9 +83,10 @@ public class OrdersManager
     {
         ArrayList<Dish> restauranDishes = new ArrayList<>();
         for(Dish d : orderDishes){
-            if(!hasDish(d.getId_dish(), restauranDishes
-            )){
-                restauranDishes.add(d);
+            if(d.getRestaurant().getId_restaurant()==restaurantId){
+                if(!hasDish(d.getId_dish(), restauranDishes)){
+                    restauranDishes.add(d);
+                }
             }
         }
         return restauranDishes;

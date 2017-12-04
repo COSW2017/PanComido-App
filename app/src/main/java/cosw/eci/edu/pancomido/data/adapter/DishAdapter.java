@@ -76,18 +76,11 @@ public class DishAdapter
     }
 
     class viewHolder
-            extends RecyclerView.ViewHolder
-    {
-
+            extends RecyclerView.ViewHolder {
         ImageView image;
-
         TextView name;
-
         TextView price;
-
         Button addQuantity;
-
-
         public viewHolder( View itemView )
         {
             super( itemView );
@@ -96,13 +89,10 @@ public class DishAdapter
             price = (TextView) itemView.findViewById( R.id.dish_price );
             addQuantity = (Button) itemView.findViewById( R.id.add_product );
         }
-
-
         public void setName( String name )
         {
             this.name.setText( name );
         }
-
         public void setPrice( String price )
         {
             this.price.setText( "$ " + price );

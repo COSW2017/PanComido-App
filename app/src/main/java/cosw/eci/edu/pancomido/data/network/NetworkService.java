@@ -4,6 +4,7 @@ import java.util.List;
 
 import cosw.eci.edu.pancomido.data.model.Command;
 import cosw.eci.edu.pancomido.data.model.Command_Dish;
+import cosw.eci.edu.pancomido.data.model.Comment;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
 import cosw.eci.edu.pancomido.data.model.Order;
@@ -62,5 +63,8 @@ interface NetworkService
 
     @POST( "commandDish/{id_command}/{id_dish}" )
     Call<Boolean> addCommandDish(@Path("id_command") Integer id_command, @Path("id_dish")  Integer id_dish);
+
+    @GET("restaurant/{idRestaurant}/comment")
+    Call<List<Comment>> getRestaurantComments(@Path("idRestaurant") int idRestaurant);
 
 }

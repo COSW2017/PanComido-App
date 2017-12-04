@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cosw.eci.edu.pancomido.data.model.Command;
+import cosw.eci.edu.pancomido.data.model.Comment;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
 import cosw.eci.edu.pancomido.data.model.Order;
@@ -312,6 +313,26 @@ public class RetrofitNetwork
                 try
                 {
                     Response<Boolean> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void getRestaurantComments(final Integer idRestaurant, final RequestCallback<List<Comment>> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getRestaurantComments(idRestaurant);
+                try {
+                    Response<List<Comment>> execute = call.execute();
                     requestCallback.onSuccess( execute.body() );
                 }
                 catch ( IOException e )
