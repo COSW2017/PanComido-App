@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Command;
 import cosw.eci.edu.pancomido.data.model.Command_Dish;
 import cosw.eci.edu.pancomido.data.model.Dish;
@@ -48,6 +49,7 @@ import cosw.eci.edu.pancomido.data.network.RequestCallback;
 import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
 import cosw.eci.edu.pancomido.exception.NetworkException;
 import cosw.eci.edu.pancomido.misc.SessionManager;
+import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,7 +79,12 @@ public class PaymentFragment extends Fragment{
     private int total_dishes;
 
     private SessionManager sessionManager;
+
+    private static RestaurantsListener restaurantsListener;
+    private HashMap<Integer, List<Dish>> dishesLists;
     private HashMap<String, String> map;
+
+
 
     public PaymentFragment() {
         // Required empty public constructor
@@ -104,17 +111,40 @@ public class PaymentFragment extends Fragment{
 
     }
 
+    private void getDishes() {
+        map = new HashMap<>();
+        dishesLists = new HashMap<>();
+        dishes = new ArrayList<>();
+        dishes_info = new ArrayList<>();
+        List<Restaurant> restaurants = restaurantsListener.getRestaurants();
+        for(Restaurant r : restaurants){
+            List<Dish> dishes = restaurantsListener.getDishesByRestaurant(r.getId_restaurant());
+            dishesLists.put(r.getId_restaurant(), dishes);
+            for(Dish d : dishes){
+                int quanty = restaurantsListener.getDishQuanty(d.getId_dish());
+                for (int i = 0 ; i < quanty; i++){
+                    this.dishes.add(d.getName());
+                    dishes_info.add(d);
+                    map.put(d.getId_dish()+"", r.getId_restaurant()+"");
+                }
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_payment, container, false);
+        restaurantsListener = (RestaurantsActivity) getActivity();
         iPay = (RadioButton) view.findViewById(R.id.i_pay);
         friendsPay = (RadioButton) view.findViewById(R.id.friend_pay);
         findFriends = (SearchView) view.findViewById(R.id.find_friends);
         friends = (ListView) view.findViewById(R.id.friend_list);
         pay = (Button) view.findViewById(R.id.pay_button);
         sessionManager = new SessionManager(getActivity());
+
+        getDishes();
 
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,14 +223,14 @@ public class PaymentFragment extends Fragment{
 
         Gson gson = new Gson();
         SessionManager sessionManager = new SessionManager(getActivity());
-        map = gson.fromJson(sessionManager.getDishes(), HashMap.class);
-        System.out.println(map);
-        dishes = new ArrayList<>();
-        dishes_info = new ArrayList<>();
-        int size = map.size();
+
+        //System.out.println("list: "+dishesLists);
+        //dishes = new ArrayList<>();
+        //dishes_info = new ArrayList<>();
+        //int size = map.size();
         cant2 = 0;
         total_dishes = 0;
-        for(Map.Entry<String, String> entry : map.entrySet()){
+        /*for(Map.Entry<String, String> entry : map.entrySet()){
             String[] key = entry.getKey().split(",");
             final Integer cant = Integer.parseInt(entry.getValue());
             Integer id_rest = Integer.parseInt(key[1]);
@@ -223,7 +253,7 @@ public class PaymentFragment extends Fragment{
 
         while(cant2!=size){
             System.out.println("algo"); //NO BORRARRRRRR
-        }
+        }*/
 
         final boolean[] booleans = new boolean[dishes.size()];
 
@@ -271,7 +301,7 @@ public class PaymentFragment extends Fragment{
                                         users_added.add(friend);
                                     }
                                     mSelectedItems.put(dish, users_added);
-                                    System.out.println(mSelectedItems);
+                                    //System.out.println(mSelectedItems);
                                 } else if (mSelectedItems.get(dish)!=null) {
                                     // Else, if the item is already in the array, remove it
                                     mSelectedItems.get(dish).remove(friend);
@@ -290,6 +320,8 @@ public class PaymentFragment extends Fragment{
 
     private void finishPayment() {
 
+        //System.out.println("Mapa final: "+map);
+
         final RetrofitNetwork network = new RetrofitNetwork();
 
         RequestCallback<Order> rc_order = new RequestCallback<Order>() {
@@ -302,45 +334,47 @@ public class PaymentFragment extends Fragment{
                     public void onSuccess(Command respons) {
                         Command command = respons;
 
-                        for(Map.Entry<String, String> entry : map.entrySet()) {
-                            String[] key = entry.getKey().split(",");
-                            final Integer cant = Integer.parseInt(entry.getValue());
-                            Integer id_rest = Integer.parseInt(key[1]);
-                            final Integer id_dish = Integer.parseInt(key[0]);
+                        for(Map.Entry<Integer, List<Dish>> entr : dishesLists.entrySet()) {
+                            for(Dish d : entr.getValue()){
 
-                            for (int i = 0 ; i < cant; i++){
-                                RequestCallback<Boolean> rc_command_dish = new RequestCallback<Boolean>() {
-                                    @Override
-                                    public void onSuccess(Boolean response) {
-                                        if(response){
-                                            System.out.println(id_dish+" added");
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    FragmentManager manager = getFragmentManager();
-                                                    manager.beginTransaction().replace(R.id.fragment_container, new PaymentSuccessFragment()).addToBackStack(null).commit();
-                                                }
-                                            });
-                                            sessionManager.clearOrder();
-                                        }else{
-                                            System.out.println(id_dish+" not added");
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
+                                final Integer id_dish = d.getId_dish();
+                                final int cant = restaurantsListener.getDishQuanty(id_dish);
+                                final Integer id_rest = entr.getKey();
+                                for (int i = 0 ; i < cant; i++){
+                                    RequestCallback<Boolean> rc_command_dish = new RequestCallback<Boolean>() {
+                                        @Override
+                                        public void onSuccess(Boolean response) {
+                                            if(response){
+                                                System.out.println(id_dish+" added");
+                                                getActivity().runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        FragmentManager manager = getFragmentManager();
+                                                        manager.beginTransaction().replace(R.id.fragment_container, new PaymentSuccessFragment()).addToBackStack(null).commit();
+                                                    }
+                                                });
+                                                sessionManager.clearOrder();
+                                            }else{
+                                                System.out.println(id_dish+" not added");
+                                                getActivity().runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void onFailed(NetworkException e) {
+                                        @Override
+                                        public void onFailed(NetworkException e) {
 
-                                    }
-                                };
-                                System.out.println(command);
-                                network.addCommandDish(id_dish, command.getId_command(), rc_command_dish);
+                                        }
+                                    };
+                                    System.out.println(command);
+                                    network.addCommandDish(id_dish, command.getId_command(), rc_command_dish);
+                                }
                             }
+
                         }
 
                     }
@@ -396,14 +430,22 @@ public class PaymentFragment extends Fragment{
             ArrayList<String> arrayList = new ArrayList<>();
             cant_friends = response.size();
 
+            total_dishes = 0;
+
+            for (List<Dish> dishes : dishesLists.values()){
+                for (Dish d : dishes){
+                    total_dishes+=restaurantsListener.getDishQuanty(d.getId_dish());
+                }
+            }
+
             for(int i = 0 ; i < cant_friends; i++){
                 booleans_final.add(new boolean[total_dishes]);
             }
 
-            System.out.println("Booleans "+booleans_final);
+            /*System.out.println("Booleans "+booleans_final);
             for (boolean[] b : booleans_final){
                 System.out.println(Arrays.toString(b));
-            }
+            }*/
 
             for (User u : response){
                 arrayList.add(u.getFirstname()+" "+u.getLastname());
