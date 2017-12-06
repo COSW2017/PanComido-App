@@ -10,48 +10,60 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.data.model.Order;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
-import cosw.eci.edu.pancomido.misc.loadImage;
+import cosw.eci.edu.pancomido.ui.fragment.OrderHistoryDetailFragment;
 import cosw.eci.edu.pancomido.ui.fragment.RestaurantFragment;
 
 /**
  * Created by estudiante on 3/9/17.
  */
 
-public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.viewHolder> {
+public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapter.viewHolder> {
 
-    private List<Restaurant> restaurants;
+    private List<Order> orders;
 
-    public RestaurantListAdapter(List<Restaurant> t){
-        restaurants = t;
+    public OrderHistoryAdapter(List<Order> t){
+        orders = t;
     }
 
     @Override
     public viewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.restaurant_list, parent, false);
+                .inflate(R.layout.orders_list, parent, false);
 
         return new viewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(viewHolder holder, int position) {
-        final Restaurant r = restaurants.get(position);
-        holder.setName(r.getName());
-        Picasso.with( holder.itemView.getContext() ).load( r.getImage() ).into( holder.row );
+        final Order r = orders.get(position);
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            Date newDate = format.parse(r.getCreation_date());
+
+            format = new SimpleDateFormat("MMM dd,yyyy");
+            String date = format.format(newDate);;
+            holder.setName(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new RestaurantFragment();
+                Fragment fragment = new OrderHistoryDetailFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("name",r.getName());
+                bundle.putInt("id_order",r.getId_order());
                 fragment.setArguments(bundle);
                 FragmentManager manager = ((Activity) v.getContext()).getFragmentManager();
                 manager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack("lista").commit();
@@ -61,7 +73,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
     @Override
     public int getItemCount() {
-        return restaurants.size();
+        return orders.size();
     }
 
     class viewHolder extends RecyclerView.ViewHolder {
@@ -75,7 +87,6 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             row = (ImageView) itemView.findViewById(R.id.row);
             row.setImageResource(R.drawable.ic_keyboard_arrow_right);
         }
-
 
         public TextView getName() {
             return name;

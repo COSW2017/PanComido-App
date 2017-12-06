@@ -47,4 +47,12 @@ public interface Network
 
     void getRestaurantComments(Integer idRestaurant, RequestCallback<List<Comment>> requestCallback);
 
+    void getOrdersByUser(int idUser, RequestCallback<List<Order>> requestCallback);
+
+    void getOrderById(int idOrder, RequestCallback<Order> requestCallback);
+
+    void getCommandsByOrder(int idOrder, RequestCallback<List<Command>> requestCallback);
+
+    void getDishesByCommand(int idCommand, RequestCallback<List<Dish>> requestCallback);
+
 }

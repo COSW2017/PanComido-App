@@ -38,13 +38,13 @@
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    tools:text="Borrusia Dortmund"/>
+                    tools:text="Date"/>
 
 
                 <ImageView
                     android:id="@+id/row"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     tools:src="@drawable/ic_keyboard_arrow_right"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"

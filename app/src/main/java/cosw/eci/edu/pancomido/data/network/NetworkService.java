@@ -67,4 +67,16 @@ interface NetworkService
     @GET("restaurant/{idRestaurant}/comment")
     Call<List<Comment>> getRestaurantComments(@Path("idRestaurant") int idRestaurant);
 
+    @GET("user/{idUser}/order")
+    Call<List<Order>> getOrdersByUser(@Path("idUser") int idUser);
+
+    @GET("user/order/{idOrder}")
+    Call<Order> getOrderById(@Path("idOrder") int idOrder);
+
+    @GET("restaurant/command/{idOrder}")
+    Call<List<Command>> getCommandsByOrder(@Path("idOrder") int idOrder);
+
+    @GET("restaurant/0/command/{idCommand}")
+    Call<List<Dish>> getDishesByCommand(@Path("idCommand") int idCommand);
+
 }

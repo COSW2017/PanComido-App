@@ -343,6 +343,87 @@ public class RetrofitNetwork
         } );
     }
 
+    @Override
+    public void getOrdersByUser(final int idUser, final RequestCallback<List<Order>> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getOrdersByUser(idUser);
+                try {
+                    Response<List<Order>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void getOrderById(final int idOrder, final RequestCallback<Order> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getOrderById(idOrder);
+                try {
+                    Response<Order> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void getCommandsByOrder(final int idOrder, final RequestCallback<List<Command>> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getCommandsByOrder(idOrder);
+                try {
+                    Response<List<Command>> execute = call.execute();
+                    execute.body();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
+    @Override
+    public void getDishesByCommand(final int idCommand, final RequestCallback<List<Dish>> requestCallback) {
+        backgroundExecutor.execute( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Call call = networkService.getDishesByCommand(idCommand);
+                try {
+                    Response<List<Dish>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+                }
+                catch ( IOException e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+            }
+        } );
+    }
+
     public void addSecureTokenInterceptor( final String token )
     {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();

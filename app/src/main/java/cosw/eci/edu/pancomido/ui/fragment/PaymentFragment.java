@@ -329,23 +329,26 @@ public class PaymentFragment extends Fragment{
             public void onSuccess(Order response) {
                 Order order = response;
 
-                RequestCallback<Command> rc_command = new RequestCallback<Command>() {
-                    @Override
-                    public void onSuccess(Command respons) {
-                        Command command = respons;
 
-                        for(Map.Entry<Integer, List<Dish>> entr : dishesLists.entrySet()) {
-                            for(Dish d : entr.getValue()){
+                for(final Map.Entry<Integer, List<Dish>> entr : dishesLists.entrySet()) {
+                    final Integer id_rest = entr.getKey();
+
+                    RequestCallback<Command> rc_command = new RequestCallback<Command>() {
+                        @Override
+                        public void onSuccess(Command respons) {
+                            Command command = respons;
+
+                            for (Dish d : entr.getValue()) {
 
                                 final Integer id_dish = d.getId_dish();
                                 final int cant = restaurantsListener.getDishQuanty(id_dish);
-                                final Integer id_rest = entr.getKey();
-                                for (int i = 0 ; i < cant; i++){
+
+                                for (int i = 0; i < cant; i++) {
                                     RequestCallback<Boolean> rc_command_dish = new RequestCallback<Boolean>() {
                                         @Override
                                         public void onSuccess(Boolean response) {
-                                            if(response){
-                                                System.out.println(id_dish+" added");
+                                            if (response) {
+                                                System.out.println(id_dish + " added");
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -354,8 +357,8 @@ public class PaymentFragment extends Fragment{
                                                     }
                                                 });
                                                 sessionManager.clearOrder();
-                                            }else{
-                                                System.out.println(id_dish+" not added");
+                                            } else {
+                                                System.out.println(id_dish + " not added");
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -377,21 +380,21 @@ public class PaymentFragment extends Fragment{
 
                         }
 
-                    }
+                        @Override
+                        public void onFailed(NetworkException e) {
 
-                    @Override
-                    public void onFailed(NetworkException e) {
+                        }
 
-                    }
-                };
+                    };
 
-                SimpleDateFormat sdf = new SimpleDateFormat(
-                        "yyyy-MM-dd");
-                Command command = new Command();
-                command.setCreation_date(sdf.format(new java.sql.Date(Calendar.getInstance().getTime().getTime())));
-                command.setId_order(order);
-                command.setState(1);
-                network.addCommand(command, rc_command);
+                    SimpleDateFormat sdf = new SimpleDateFormat(
+                            "yyyy-MM-dd");
+                    Command command = new Command();
+                    command.setCreation_date(sdf.format(new java.sql.Date(Calendar.getInstance().getTime().getTime())));
+                    command.setId_order(order);
+                    command.setState(1);
+                    network.addCommand(command, rc_command);
+                }
             }
 
             @Override
