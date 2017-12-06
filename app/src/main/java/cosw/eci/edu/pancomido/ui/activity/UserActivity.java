@@ -52,7 +52,7 @@ public class UserActivity extends AppCompatActivity {
     ImageView userImage;
     Spinner citySpinner;
     User user = null;
-    SessionManager session = new SessionManager(this);
+    SessionManager session;
     RetrofitNetwork network = new RetrofitNetwork();
 
     @Override
@@ -63,6 +63,7 @@ public class UserActivity extends AppCompatActivity {
         phoneText = (EditText) findViewById(R.id.et_new_phone);
         passwordText = (EditText) findViewById(R.id.et_new_password);
         citySpinner = (Spinner) findViewById(R.id.sp_new_city);
+        session = new SessionManager(this);
 
         RequestCallback<User> request = new RequestCallback<User>() {
             @Override
@@ -74,9 +75,14 @@ public class UserActivity extends AppCompatActivity {
                         phoneText.setText(response.getCellphone());
                         passwordText.setText(response.getUser_password());
                         if (response.getImage() != null && !response.getImage().equals("")){
-                            byte[] decodedBytes = Base64.decode(response.getImage(), Base64.DEFAULT);
-                            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-                            userImage.setImageBitmap(decodedBitmap);
+                            try {
+                                byte[] decodedBytes = Base64.decode(response.getImage(), Base64.DEFAULT);
+                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                                userImage.setImageBitmap(decodedBitmap);
+                            }catch (Exception e){
+                                Log.e(TAG, "Unable to set image view");
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });
@@ -191,13 +197,25 @@ public class UserActivity extends AppCompatActivity {
 
         RequestCallback<User> userRequestCallback = new RequestCallback<User>() {
             @Override
-            public void onSuccess(User response) {
-                user.setCellphone(phoneText.getText().toString());
-                user.setUser_password(passwordText.getText().toString());
-                if (changed) {
-                    Bitmap image = ((BitmapDrawable) userImage.getDrawable()).getBitmap();
-                    user.setImage(encodeImage(image));
-                }
+            public void onSuccess(final User response) {
+                UserActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        user.setCellphone(phoneText.getText().toString());
+                        user.setUser_password(passwordText.getText().toString());
+                        if (changed) {
+                            Bitmap image = ((BitmapDrawable) userImage.getDrawable()).getBitmap();
+                            if (image != null){
+                                try {
+                                    user.setImage(encodeImage(image));
+                                }catch (Exception e){
+                                    Log.e(TAG, "Unable to fetch image from view");
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
             }
 
             @Override
@@ -206,12 +224,11 @@ public class UserActivity extends AppCompatActivity {
             }
         };
         network.updateUser(user, userRequestCallback);
-        Toast.makeText(UserActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
     }
 
     private String encodeImage(@NonNull Bitmap img){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        img.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] bytes = stream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }

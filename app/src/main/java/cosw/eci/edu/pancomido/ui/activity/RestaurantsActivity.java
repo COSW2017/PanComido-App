@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -109,10 +110,13 @@ public class RestaurantsActivity
                         userEmail.setText( response.getEmail() );
                         if ( response.getImage() != null )
                         {
-                            byte[] decodedString = Base64.decode( response.getImage(), Base64.DEFAULT );
-                            Bitmap decodedByte =
-                                    BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
-                            userImage.setImageBitmap( decodedByte );
+                            try {
+                                byte[] decodedString = Base64.decode(response.getImage(), Base64.DEFAULT);
+                                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                userImage.setImageBitmap(decodedByte);
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } );

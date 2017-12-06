@@ -127,8 +127,6 @@ public class SignupActivity extends AppCompatActivity {
         final String password = passwordText.getText().toString();
         final String city = (String) citySpinner.getSelectedItem();
 
-        // TODO: Implement your own signup logic here.
-
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
