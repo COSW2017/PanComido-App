@@ -109,4 +109,61 @@ public class PaymentSuccessFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public static class OrderHistoryFragment extends android.support.v4.app.Fragment {
+
+        private OnFragmentInteractionListener mListener;
+
+        public OrderHistoryFragment() {
+        }
+
+        public static OrderHistoryFragment newInstance(String param1, String param2) {
+            OrderHistoryFragment fragment = new OrderHistoryFragment();
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View v = inflater.inflate(R.layout.fragment_order_history, container, false);
+            return v;
+        }
+
+        // TODO: Rename method, update argument and hook method into UI event
+        public void onButtonPressed(Uri uri) {
+            if (mListener != null) {
+                mListener.onFragmentInteraction(uri);
+            }
+        }
+
+        @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            if (context instanceof OnFragmentInteractionListener) {
+                mListener = (OnFragmentInteractionListener) context;
+            } else {
+                throw new RuntimeException(context.toString()
+                        + " must implement OnFragmentInteractionListener");
+            }
+        }
+
+        @Override
+        public void onDetach() {
+            super.onDetach();
+            mListener = null;
+        }
+
+        public interface OnFragmentInteractionListener {
+            // TODO: Update argument type and name
+            void onFragmentInteraction(Uri uri);
+        }
+    }
 }

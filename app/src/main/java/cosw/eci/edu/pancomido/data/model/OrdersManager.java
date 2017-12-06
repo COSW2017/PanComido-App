@@ -56,11 +56,27 @@ public class OrdersManager
     public List<Restaurant> getRestaurants(){
         ArrayList<Restaurant> restaurants = new ArrayList<>();
         for(Dish d : orderDishes){
-            if(!restaurants.contains(d.getRestaurant())){
+            if(!hasRestaurant(d.getRestaurant().getId_restaurant(), restaurants)){
                 restaurants.add(d.getRestaurant());
             }
         }
         return restaurants;
+    }
+
+    private boolean hasRestaurant(int idRestaurant, ArrayList<Restaurant> restaurants){
+        boolean found =false;
+        for(int i =0; i<restaurants.size() && !found; i++){
+            found=idRestaurant==restaurants.get(i).getId_restaurant();
+        }
+        return found;
+    }
+
+    private boolean hasDish(int idDish, ArrayList<Dish> dishes){
+        boolean found =false;
+        for(int i =0; i<dishes.size() && !found; i++){
+            found=idDish==dishes.get(i).getId_dish();
+        }
+        return found;
     }
 
     public List<Dish> getDishesByRestaurant(int restaurantId )
@@ -68,7 +84,9 @@ public class OrdersManager
         ArrayList<Dish> restauranDishes = new ArrayList<>();
         for(Dish d : orderDishes){
             if(d.getRestaurant().getId_restaurant()==restaurantId){
-                restauranDishes.add(d);
+                if(!hasDish(d.getId_dish(), restauranDishes)){
+                    restauranDishes.add(d);
+                }
             }
         }
         return restauranDishes;

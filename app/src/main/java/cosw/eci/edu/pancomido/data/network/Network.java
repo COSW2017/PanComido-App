@@ -4,6 +4,7 @@ import java.util.List;
 
 import cosw.eci.edu.pancomido.data.model.Command;
 import cosw.eci.edu.pancomido.data.model.Command_Dish;
+import cosw.eci.edu.pancomido.data.model.Comment;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.LoginWrapper;
 import cosw.eci.edu.pancomido.data.model.Order;
@@ -45,4 +46,15 @@ public interface Network
     void addOrder(Order order, RequestCallback<Order> requestCallback);
 
     void addCommandDish(Integer idDish, Integer idCommand, RequestCallback<Boolean> requestCallback);
+
+    void getRestaurantComments(Integer idRestaurant, RequestCallback<List<Comment>> requestCallback);
+
+    void getOrdersByUser(int idUser, RequestCallback<List<Order>> requestCallback);
+
+    void getOrderById(int idOrder, RequestCallback<Order> requestCallback);
+
+    void getCommandsByOrder(int idOrder, RequestCallback<List<Command>> requestCallback);
+
+    void getDishesByCommand(int idCommand, RequestCallback<List<Dish>> requestCallback);
+
 }

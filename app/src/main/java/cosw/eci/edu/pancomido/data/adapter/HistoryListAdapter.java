@@ -2,16 +2,12 @@ package cosw.eci.edu.pancomido.data.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
-
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,14 +16,13 @@ import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
-import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.ui.fragment.OrderDetailFragment;
 
 /**
  * Created by Alejandra on 11/11/2017.
  */
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class HistoryListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private List<Restaurant> restaurants;
@@ -35,7 +30,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final RestaurantsListener restaurantsListener;
 
 
-    public ExpandableListAdapter(Context context, RestaurantsListener listener, HashMap<Integer, List<Dish>> dishesLists){
+    public HistoryListAdapter(Context context, RestaurantsListener listener, HashMap<Integer, List<Dish>> dishesLists){
         this.context = context;
         restaurantsListener = listener;
         this.restaurants = restaurantsListener.getRestaurants();

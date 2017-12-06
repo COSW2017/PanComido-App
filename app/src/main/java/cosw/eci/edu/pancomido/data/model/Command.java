@@ -49,4 +49,14 @@ public class Command {
     public void setId_order(Order order) {
         this.id_order = order;
     }
+
+    @Override
+    public String toString() {
+        return "Command{" +
+                "id_command=" + id_command +
+                ", state=" + state +
+                ", creation_date='" + creation_date + '\'' +
+                ", id_order=" + id_order +
+                '}';
+    }
 }
