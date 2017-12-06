@@ -63,6 +63,7 @@ public class UserActivity extends AppCompatActivity {
         phoneText = (EditText) findViewById(R.id.et_new_phone);
         passwordText = (EditText) findViewById(R.id.et_new_password);
         citySpinner = (Spinner) findViewById(R.id.sp_new_city);
+        userImage = (ImageView) findViewById(R.id.iv_new_image);
         session = new SessionManager(this);
 
         RequestCallback<User> request = new RequestCallback<User>() {
@@ -76,6 +77,7 @@ public class UserActivity extends AppCompatActivity {
                         passwordText.setText(response.getUser_password());
                         if (response.getImage() != null && !response.getImage().equals("")){
                             try {
+                                System.out.println(response.getImage());
                                 byte[] decodedBytes = Base64.decode(response.getImage(), Base64.DEFAULT);
                                 Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
                                 userImage.setImageBitmap(decodedBitmap);
@@ -163,7 +165,6 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        userImage = (ImageView) findViewById(R.id.imageView);
 
         if (resultCode == RESULT_OK && data != null){
             switch (requestCode){
@@ -214,6 +215,7 @@ public class UserActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                        Toast.makeText(UserActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
