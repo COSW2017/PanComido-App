@@ -37,6 +37,7 @@
                 android:background="@android:color/white">
 
                 <TextView
+                    android:id="@+id/order_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
@@ -64,7 +65,7 @@
 
                 <TextView
                     android:layout_marginStart="10dp"
-                    android:id="@+id/order_total"
+                    android:id="@+id/history_resume_total"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Total: $ XXXXXXXXXXX"
@@ -72,7 +73,7 @@
                     android:textSize="15sp"/>
 
                 <ExpandableListView
-                    android:id="@+id/list_commands"
+                    android:id="@+id/history_list_commands"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="30dp">

@@ -9,12 +9,16 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
+import cosw.eci.edu.pancomido.data.model.Order;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
 import cosw.eci.edu.pancomido.ui.fragment.OrderDetailFragment;
 
@@ -27,14 +31,14 @@ public class HistoryListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<Restaurant> restaurants;
     private HashMap<Integer, List<Dish>> dishesLists;
-    private final RestaurantsListener restaurantsListener;
+    private Order order;
 
 
-    public HistoryListAdapter(Context context, RestaurantsListener listener, HashMap<Integer, List<Dish>> dishesLists){
+    public HistoryListAdapter(Context context, List<Restaurant> restaurants, HashMap<Integer, List<Dish>> dishesLists, Order order){
         this.context = context;
-        restaurantsListener = listener;
-        this.restaurants = restaurantsListener.getRestaurants();
+        this.restaurants = restaurants;
         this.dishesLists = dishesLists;
+        this.order = order;
     }
 
     @Override
@@ -96,57 +100,39 @@ public class HistoryListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.restaurant_row_item, null);
+            convertView = infalInflater.inflate(R.layout.history_order_row_item, null);
         }
         Restaurant idRestaurant= restaurants.get(groupPosition);
         Dish dish = dishesLists.get(idRestaurant.getId_restaurant()).get(childPosition);
         TextView name = (TextView) convertView.findViewById(R.id.dish_name_row);
-        TextView quanty = (TextView) convertView.findViewById(R.id.dish_quanty_row);
+        //TextView quanty = (TextView) convertView.findViewById(R.id.dish_quanty_row);
         TextView price= (TextView) convertView.findViewById(R.id.dish_price_row);
         name.setText(dish.getName());
-        int price1 = dish.getPrice()*restaurantsListener.getDishQuanty(dish.getId_dish());
+
+        int price1 = dish.getPrice();
+        //*restaurantsListener.getDishQuanty(dish.getId_dish());
         price.setText("$ "+price1);
-        quanty.setText(restaurantsListener.getDishQuanty(dish.getId_dish())+"");
-        setActionsButtons(convertView, dish, childPosition, groupPosition);
+        //quanty.setText(restaurantsListener.getDishQuanty(dish.getId_dish())+"");
+        //setActionsButtons(convertView, dish, childPosition, groupPosition);
         return convertView;
-    }
-
-    private void setActionsButtons(View convertView, final Dish dish, final int childPosition, final int groupPosition) {
-        Button addButton = (Button) convertView.findViewById(R.id.dish_add_row);
-        Button delButton = (Button) convertView.findViewById(R.id.dish_del_row);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantsListener.onAddDishToOrder(dish);
-                addProduct();
-            }
-        });
-
-        delButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               deleteProduct(dish, childPosition, groupPosition);
-            }
-        });
-
     }
 
     private void addProduct() {
         this.notifyDataSetChanged();
-        OrderDetailFragment.refreshPrice();
+        //OrderDetailFragment.refreshPrice();
     }
 
     private void deleteProduct(Dish dish, int childPosition, int groupPosition){
-        restaurantsListener.deleteDishFromOrder(dish.getId_dish());
-        if(restaurantsListener.getDishQuanty(dish.getId_dish())<1){
-            dishesLists.get(dish.getRestaurant().getId_restaurant()).remove(childPosition);
-        }
+        //restaurantsListener.deleteDishFromOrder(dish.getId_dish());
+        //if(restaurantsListener.getDishQuanty(dish.getId_dish())<1){
+            //dishesLists.get(dish.getRestaurant().getId_restaurant()).remove(childPosition);
+        //}
         if(dishesLists.get(dish.getRestaurant().getId_restaurant()).size()<1){
             dishesLists.remove(dish.getRestaurant().getId_restaurant());
             restaurants.remove(groupPosition);
         }
         this.notifyDataSetChanged();
-        OrderDetailFragment.refreshPrice();
+        //OrderDetailFragment.refreshPrice();
     }
 
 

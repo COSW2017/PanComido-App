@@ -11,17 +11,25 @@ public class Order {
     private Integer id_order;
     private String creation_date;
 
+    public Integer state;
+
+    public Boolean ready;
+
     //private List<Command> commands; //Falta guardar los pedidos
 
     private User user_id;
 
 
     public Order() {
+        this.state = -1;
+        this.ready = true;
     }
 
     public Order(Integer id_order, User user) {
         this.id_order = id_order;
         this.user_id = user;
+        this.state = -1;
+        this.ready = true;
     }
 
     public Integer getId_order() {
@@ -72,14 +80,14 @@ public class Order {
                 '}';
     }
 
+    public void setReady(boolean ready){
+        this.ready = ready;
+    }
+
     /*
     En cola: 0, En progreso: 1, Listo=2
      */
     public boolean isReady(){
-        Boolean ready = true;
-        /*for(Command p : commands){
-            ready = ready && p.getState()== 2 ? true : false;
-        }*/
         return ready;
     }
 

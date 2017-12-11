@@ -66,6 +66,7 @@ public class OrderHistoryFragment extends Fragment {
                     @Override
                     public void run() {
                         configureRecyclerView(response);
+                        hideDialog();
                     }
                 });
             }
@@ -74,13 +75,6 @@ public class OrderHistoryFragment extends Fragment {
             }
         };
         retrofitNetwork.getOrdersByUser(Integer.parseInt(sessionManager.getUserId()), rc);
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //swipeLayout.setRefreshing(false);
-                hideDialog();
-            }
-        });
     }
 
     private void configureRecyclerView(List<Order> orders){

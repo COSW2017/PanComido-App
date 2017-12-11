@@ -15,8 +15,14 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.adapter.ExpandableListAdapter;
@@ -47,11 +53,11 @@ public class OrderHistoryDetailFragment extends Fragment {
     private Button goPay;
     private ExpandableListView expandableListView;
     private HashMap<String, String> map;
-    private List<Restaurant> restaurants;
     private HashMap<Integer, List<Dish>> dishesLists;
     private HashMap<Integer, List<Integer>> dishesQuanty;
+    private HashSet<Restaurant> restaurants;
     private Integer q =0;
-    private static TextView totalOrder;
+    private boolean is_ready;
     private static RestaurantsListener restaurantsListener;
 
     private int internal_cont;
@@ -98,21 +104,18 @@ public class OrderHistoryDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_order_detail, container, false);
+        view = inflater.inflate(R.layout.order_row, container, false);
         internal_cont = 0;
         args = this.getArguments();
         restaurantsListener = (RestaurantsActivity) getActivity();
-        goPay = (Button) view.findViewById(R.id.goToPay);
-        goPay.setVisibility(View.GONE);
         /*goPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToPay();
             }
         });*/
-        expandableListView = (ExpandableListView) view.findViewById(R.id.list_commands);
-        totalOrder = (TextView) view.findViewById(R.id.resume_total);
-        totalOrder.setText("Total: $"+restaurantsListener.onGetTotalOrder()+"");
+        restaurants = new HashSet<>();
+        expandableListView = (ExpandableListView) view.findViewById(R.id.history_list_commands);
         dishesLists = new HashMap<>();
         //getDishes();
         getOrderDetail();
@@ -137,6 +140,13 @@ public class OrderHistoryDetailFragment extends Fragment {
 
 
                                 for (final Command command : response) {
+                                    if (o.state==-1){
+                                        o.state = command.getState();
+                                    }else{
+                                        if(o.state!=command.getState()){
+                                            order.setReady(false);
+                                        }
+                                    }
                                     r.getDishesByCommand(command.getId_command(), new RequestCallback<List<Dish>>() {
                                         @Override
                                         public void onSuccess(List<Dish> dishes) {
@@ -144,6 +154,8 @@ public class OrderHistoryDetailFragment extends Fragment {
                                             if (dishes.size() > 0) {
                                                 dishesLists.put(dishes.get(0).getRestaurant().getId_restaurant(), dishes);
                                             }
+                                            restaurants.add(dishes.get(0).getRestaurant());
+
                                             internal_cont++;
                                         }
 
@@ -153,10 +165,6 @@ public class OrderHistoryDetailFragment extends Fragment {
                                         }
                                     });
                                 }
-
-
-
-                        hideDialog();
 
                         System.out.println("Size: " + dishesLists.size());
 
@@ -220,8 +228,48 @@ public class OrderHistoryDetailFragment extends Fragment {
             }
             addDish();
         }else {
+            hideDialog();
             System.out.println("Dishes final: "+dishesLists);
-            HistoryListAdapter listAdapter = new HistoryListAdapter(getActivity(), restaurantsListener, dishesLists);
+            TextView date = (TextView) view.findViewById(R.id.order_date);
+            try {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                Date newDate = format.parse(order.getCreation_date());
+                format = new SimpleDateFormat("MMM dd,yyyy");
+                date.setText(format.format(newDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            TextView state = (TextView) view.findViewById(R.id.order_state);
+
+            state.setText(order.isReady()?"":"");
+
+            TextView order_number = (TextView) view.findViewById(R.id.order_number);
+
+            order_number.setText("ORDER #"+order.getId_order());
+
+            int total_order = 0;
+
+            for (Map.Entry<Integer, List<Dish>> entry: dishesLists.entrySet()){
+                for(Dish d : entry.getValue()){
+                    total_order+=d.getPrice();
+                }
+            }
+
+            TextView history_resume_total = (TextView) view.findViewById(R.id.history_resume_total);
+
+            history_resume_total.setText("$"+total_order);
+
+            TextView order_state = (TextView) view.findViewById(R.id.order_state);
+
+            if (!order.isReady()){
+                order_state.setText("Pending");
+            }else{
+                //Todo: Alejandra
+                order_state.setText(order.state==1?"Pendiente":order.state==2?"Lista":"Entregada");
+            }
+
+            HistoryListAdapter listAdapter = new HistoryListAdapter(getActivity(), new ArrayList<Restaurant>(restaurants), dishesLists, order);
             expandableListView.setAdapter(listAdapter);
         }
     }
@@ -267,10 +315,6 @@ public class OrderHistoryDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    public static void refreshPrice(){
-        totalOrder.setText("Total: $"+restaurantsListener.onGetTotalOrder()+"");
     }
 
 
