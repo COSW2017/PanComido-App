@@ -12,22 +12,14 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cosw.eci.edu.pancomido.R;
 import cosw.eci.edu.pancomido.data.adapter.ExpandableListAdapter;
 import cosw.eci.edu.pancomido.data.listener.RestaurantsListener;
 import cosw.eci.edu.pancomido.data.model.Dish;
 import cosw.eci.edu.pancomido.data.model.Restaurant;
-import cosw.eci.edu.pancomido.data.network.RequestCallback;
-import cosw.eci.edu.pancomido.data.network.RetrofitNetwork;
-import cosw.eci.edu.pancomido.exception.NetworkException;
-import cosw.eci.edu.pancomido.misc.SessionManager;
 import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 
@@ -51,7 +43,6 @@ public class OrderDetailFragment extends Fragment {
     private Integer q =0;
     private static TextView totalOrder;
     private static RestaurantsListener restaurantsListener;
-
 
     private OnFragmentInteractionListener mListener;
 

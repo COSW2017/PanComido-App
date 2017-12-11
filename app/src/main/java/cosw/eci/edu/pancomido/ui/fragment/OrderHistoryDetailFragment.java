@@ -266,7 +266,7 @@ public class OrderHistoryDetailFragment extends Fragment {
                 order_state.setText("Pending");
             }else{
                 //Todo: Alejandra
-                order_state.setText(order.state==1?"Pendiente":order.state==2?"Lista":"Entregada");
+                order_state.setText(order.state==1?"Pendiente":order.state==2?"Lista para ser entregada":"Entregada");
             }
 
             HistoryListAdapter listAdapter = new HistoryListAdapter(getActivity(), new ArrayList<Restaurant>(restaurants), dishesLists, order);
