@@ -11,14 +11,14 @@
         android:id="@+id/numeroPedido"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pedido"
+        android:text="@string/command"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre del restaurante"
+        android:text="@string/restaurant_name"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp" />
 

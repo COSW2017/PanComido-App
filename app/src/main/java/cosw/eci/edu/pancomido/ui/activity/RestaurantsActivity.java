@@ -63,6 +63,8 @@ public class RestaurantsActivity
 
     private ImageView userImage;
 
+    private String real_email;
+
     private final OrdersManager ordersManager = new OrdersManager();
 
     String[] permissions =
@@ -125,13 +127,10 @@ public class RestaurantsActivity
             }
         };
         retrofitNetwork.getUserByEmail( session.getEmail(), requestCallback );
-        String real_email = session.getEmail().replaceAll("\\.","dot").replaceAll("@","at");
+        real_email = session.getEmail().replaceAll("\\.","dot").replaceAll("@","at");
         // [START subscribe_topics]
         FirebaseMessaging.getInstance().subscribeToTopic("user~"+real_email);
         // [END subscribe_topics]
-        // Log and toast
-        String msg = ("Suscribed");
-        Toast.makeText(RestaurantsActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -217,6 +216,7 @@ public class RestaurantsActivity
         {
             session.logoutUser();
             Intent i = new Intent( RestaurantsActivity.this, LoginActivity.class );
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(real_email);
             startActivity( i );
             finish();
         }

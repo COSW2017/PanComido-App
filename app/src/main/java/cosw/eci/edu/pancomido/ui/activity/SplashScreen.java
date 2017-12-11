@@ -13,21 +13,30 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        Thread timer = new Thread(){
-            //El nuevo Thread exige el metodo run
-            public void run(){
-                try{
-                    sleep(2000);
-                }catch(InterruptedException e){
-                    e.printStackTrace();
-                }finally{
-                    Intent intent = new Intent();
-                    intent.setClass(SplashScreen.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
+        Intent intent = getIntent();
+
+        if(intent.getExtras()!=null){
+            String command_id = intent.getStringExtra("command_id");
+            Intent i = new Intent(this, CommandReadyActivity.class);
+            i.putExtra("command_id", command_id);
+            startActivity(i);
+        }else{
+            Thread timer = new Thread(){
+                //El nuevo Thread exige el metodo run
+                public void run(){
+                    try{
+                        sleep(2000);
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }finally{
+                        Intent intent = new Intent();
+                        intent.setClass(SplashScreen.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
-            }
-        };
-        timer.start();
+            };
+            timer.start();
+        }
     }
 }

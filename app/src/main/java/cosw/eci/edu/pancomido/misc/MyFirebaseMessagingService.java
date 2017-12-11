@@ -30,6 +30,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import cosw.eci.edu.pancomido.R;
+import cosw.eci.edu.pancomido.ui.activity.CommandReadyActivity;
 import cosw.eci.edu.pancomido.ui.activity.RestaurantsActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -61,6 +62,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
+            String command_id = remoteMessage.getData().get("command_id");
+
+            Intent intent = new Intent(this, CommandReadyActivity.class);
+            intent.putExtra("command_id", command_id);
+            startActivity(intent);
+
 
             if (/* Check if data needs to be processed by long running job */ true) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
