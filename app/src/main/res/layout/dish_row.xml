@@ -67,11 +67,11 @@ android:layout_height="wrap_content">
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:text="+"
+            android:text="@string/plus"
             android:textSize="30sp"
             android:background="@drawable/mybutton"
             android:textColor="@android:color/white"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentEnd="true"/>
 
 
     </RelativeLayout>

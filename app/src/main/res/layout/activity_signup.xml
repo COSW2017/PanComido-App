@@ -29,7 +29,7 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapWords"
-            android:hint="Name" />
+            android:hint="@string/first_name" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -41,7 +41,7 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapWords"
-            android:hint="Last Name" />
+            android:hint="@string/last_name" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -53,7 +53,7 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:hint="Email" />
+            android:hint="@string/prompt_email" />
     </android.support.design.widget.TextInputLayout>
 
     <!-- Phone Label -->
@@ -64,7 +64,7 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
-            android:hint="Phone" />
+            android:hint="@string/phone" />
     </android.support.design.widget.TextInputLayout>
 
     <!-- City Label -->
@@ -81,7 +81,7 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            android:hint="Password"/>
+            android:hint="@string/prompt_password"/>
     </android.support.design.widget.TextInputLayout>
 
 
@@ -102,7 +102,7 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="true"
-            android:text="I accept the terms and conditions"/>
+            android:text="@string/terms"/>
 
     </LinearLayout>
 
@@ -115,7 +115,7 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:textSize="18sp"
-        android:text="Create Account"
+        android:text="@string/new_account"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:background="@color/colorPrimary"
@@ -125,9 +125,9 @@ tools:context="cosw.eci.edu.pancomido.ui.activity.SignupActivity">
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="Already a member? Login"
+        android:text="@string/login"
         android:gravity="center"
-        android:textSize="16dip"/>
+        android:textSize="16sp"/>
 
 </LinearLayout>
 </ScrollView>

@@ -27,6 +27,8 @@ public interface Network
 
     void createUser(User user, RequestCallback<User> requestCallback);
 
+    void updateUser(User user, RequestCallback<User> requestCallback);
+
     void getRestaurantInformation(String name,  RequestCallback<Restaurant> requestCallback);
 
     void getRestaurantDishes(Integer idRestaurant, RequestCallback<List<Dish>> requestCallback);
