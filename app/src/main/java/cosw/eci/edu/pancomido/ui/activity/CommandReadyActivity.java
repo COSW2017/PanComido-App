@@ -20,10 +20,20 @@ public class CommandReadyActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        String command_id = intent.getStringExtra("command_id");
+        if(intent.getExtras()!=null){
+            String command_id = intent.getStringExtra("command_id");
+            if(!command_id.isEmpty()){
+                Bitmap myBitmap = QRCode.from(command_id).bitmap();
+                ImageView myImage = (ImageView) findViewById(R.id.command_qr);
+                myImage.setImageBitmap(myBitmap);
+            }
+        }else{
+            Intent i = new Intent();
+            intent.setClass(this, RestaurantsActivity.class);
+            startActivity(i);
+            finish();
+        }
 
-        Bitmap myBitmap = QRCode.from(command_id).bitmap();
-        ImageView myImage = (ImageView) findViewById(R.id.command_qr);
-        myImage.setImageBitmap(myBitmap);
+
     }
 }

@@ -15,7 +15,7 @@ public class SplashScreen extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if(intent.getExtras()!=null){
+        if(intent.getExtras()!=null && intent.getStringExtra("command_id")!=null){
             String command_id = intent.getStringExtra("command_id");
             Intent i = new Intent(this, CommandReadyActivity.class);
             i.putExtra("command_id", command_id);
